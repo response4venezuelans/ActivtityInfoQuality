@@ -1,0 +1,36 @@
+Package: ActivtityInfoQuality
+Title: ActivtityInfo Quality
+Version: 0.0.0
+Author: legoupil@unhcr.org
+Maintainer: Edouard Legoupil <legoupil@unhcr.org>
+Description: Performs Data Quality Check and Aggregation based on a
+    reponse monitoring database.
+License: MIT + file LICENSE
+Imports: 
+    activityinfo,
+    config,
+    datamods,
+    devtools,
+    dplyr,
+    DT,
+    golem,
+    purrr,
+    readxl,
+    shiny,
+    shinydashboard,
+    shinydashboardPlus,
+    shinyjs,
+    shinyWidgets,
+    tibble,
+    tidyr,
+    tidyverse,
+    unhcrshiny
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3

@@ -1,0 +1,1155 @@
+---
+title: "Function documentation"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r development, include=FALSE}
+library(testthat)
+```
+
+```{r development-load}
+# Load already included functions if relevant
+pkgload::load_all(export_all = FALSE)
+```
+
+
+# fct_check_data
+    
+```{r function-fct_check_data}
+#' Title
+#' 
+#' Description
+#' 
+#' @return
+#' 
+#' @export
+fct_check_data <- function(){
+    
+}
+```
+  
+```{r example-fct_check_data}
+fct_check_data()
+```
+  
+```{r tests-fct_check_data}
+test_that("fct_check_data works", {
+  expect_true(inherits(fct_check_data, "function")) 
+})
+```
+  
+
+
+# fct_read_data
+    
+```{r function-fct_read_data}
+#' fct_read_data
+#' 
+#' Pull Data From ActivityInfo
+#' 
+#' Note that this function is specific to a specific DB schema -
+#' the form to query as well as the columns variabl name are hard coded and 
+#' would need to be adjusted if the DB change
+#' 
+#' Note also that the function is based on a token stored as an environment 
+#' variable
+#' 
+#'  # Credentials set up as environment variables - 
+#'  
+#'  # token <- "activityinfotoken.."
+#'  # print(Sys.setenv(ACTIVITYINFOTOKEN = token))   
+#'  # Sys.getenv("ACTIVITYINFOTOKEN")
+#'  # rm(token)
+#' 
+#' @return list with the content of the activity info DB 
+#'                * df5W 
+#'                * dfadmin1  
+#'                * dfadmin2  
+#'                * dfindicator   
+#'                * dfpartner  
+#' 
+#' 
+#' @importFrom activityinfo activityInfoToken queryTable
+#' @importFrom dplyr  arrange mutate_at rowwise ungroup
+#' @import devtools
+#' @import tidyverse
+#' @import shinyjs
+#' @import shinyWidgets
+#' @import shinydashboardPlus
+#' @import shinydashboardPlus
+#' 
+#' @export
+fct_read_data <- function( form){
+  
+  
+
+  activityinfo::activityInfoToken(Sys.getenv("ACTIVITYINFOTOKEN"),
+                                prompt = FALSE)
+
+# Get data from different sources
+
+    df5W <-  activityinfo::queryTable("cm2ansilct8v92h2s37",
+                        "Country" = "cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4",
+                        "Country Admin1" = "cezj1rqkxeqrsy57.c3ns3zikxeqq4h95",
+                        "Admin2" = "c89klrbkx6hp4j58.cs2esadkx6hkt7j6",
+                        "Appealing organisation Name" = "c5648gjkx69ra2v9.ckj5zamkumvyysv9",
+                        "Implementation Set up" = "ckjtet4kx69smeog",
+                        "Implementing partner Name" = "cdocy6flctaah8c4.ckj5zamkumvyysv9",
+                        "Month" = "clqgqrqkyueahma8",
+                        "Indicator Sector" = "cco8s7klctg5i192q.cagw22hlctcp2vu5",
+                        "Indicator" = "cco8s7klctg5i192q.c1oo0eclctcqtjp8",
+                        "Activity Name" = "c3p669wkx6a7oyo4",
+                        "Activity Description" = "c8hxf50kx6a7vp65",
+                        "RMRP Activity" = "cuf3og8kx6amylmf",
+                        "CVA" = "cbvqg4jkx6b1kii7",
+                        "Value (in USD)" = "clwkfmckx6b2msu9",
+                        "Delivery mechanism" = "cg3rikqkx6b3z1kf",
+                        "Quantity of output" = "cm6no26kx6b8fqoh",
+                        "Total monthly beneficiaries" = "cto1biukx6kwvnj4k",
+                        "New beneficiaries of the month" = "c43j49ikx6kxyyc4l",
+                        "Refugees and Migrants IN DESTINATION" = "cz3yof2kx6l024p4m",
+                        "Refugees and Migrants IN TRANSIT" = "c8kl5o2kx6l0jip4n",
+                        "Host Communities Beneficiaries" = "c5z8bvakx6l10d84o",
+                        "Refugees and Migrants PENDULARS" = "c72dmskkx6l1hl04p",
+                        "Colombian Returnees" = "cmoqhuckx6l4q9z4q",
+                        "Women under 18" = "cwrxeaekx6l63na4s",
+                        "Men under 18" = "ccx7xhekx6l6jnk4t",
+                        "Women above 18" = "c3l36n2kx6l70kp4u",
+                        "Men above 18" = "ctd27ackx6l7g814v",
+                        "Other under 18" = "ckjcuiokx6l9a504w",
+                        "Other above 18" = "cq4hs3skx6lggpj4x",
+                        truncateStrings = FALSE)
+
+ # format column names for easier data processing
+  
+  colnames(df5W) <- c("Country",
+                      "Admin1",
+                      "Admin2",
+                      "Appealing_org",
+                      "Implementation",
+                      "Implementing_partner",
+                      "Month",
+                      "Subsector",
+                      "Indicator",
+                      "Activity_Name",
+                      "Activity_Description",
+                      "RMRPActivity",
+                      "CVA",
+                      "Value",
+                      "Delivery_mechanism",
+                      "Quantity_output",
+                      "Total_monthly",
+                      "New_beneficiaries",
+                      "IN_DESTINATION",
+                      "IN_TRANSIT",
+                      "Host_Communities",
+                      "PENDULARS",
+                      "Returnees",
+                      "Girls",
+                      "Boys",
+                      "Women",
+                      "Men",
+                      "Other_under",
+                      "Other_above")
+  
+  # Short data wrangling for integer values
+  df5W <<- df5W |>
+    dplyr::mutate_at(c("Value",
+                "Quantity_output",
+                "Total_monthly",
+                "New_beneficiaries",
+                "IN_DESTINATION",
+                "IN_TRANSIT",
+                "Host_Communities",
+                "PENDULARS",
+                "Returnees",
+                "Girls",
+                "Boys",
+                "Women",
+                "Men",
+                "Other_under",
+                "Other_above"), as.numeric) |>
+    dplyr::arrange(Country, Month)
+
+  # Not recommended but if needed, chose to write the 5W as a xlsx file in repository
+  # Get other reference table used during the data quality check
+  # Loaded from AI regardless the method for 5W used
+  
+  dfadmin1  <<- activityinfo::queryTable("ctfe4etlct8v92h2s2z",
+                           "Country" = "c8u26b8kxeqpy0k4",
+                           "Admin1" = "c3ns3zikxeqq4h95",
+                           "ISOCode" = "cl3sspjkxeqq8yq6",truncateStrings = FALSE) |> 
+    dplyr::rowwise() |> 
+    dplyr::mutate(countryadmin1 = paste(Country, Admin1)) |> 
+    dplyr::ungroup()
+  
+  
+  dfadmin2 <<- activityinfo::queryTable("cxl7zn3lct8v92h2s32",
+                         "Country" = "cnkb6jykxgdeemm4r.c8u26b8kxeqpy0k4",
+                         "Admin1" = "cnkb6jykxgdeemm4r.c3ns3zikxeqq4h95",
+                         "Admin2" = "cs2esadkx6hkt7j6", truncateStrings = FALSE) |> 
+    dplyr::rowwise() |> 
+    dplyr::mutate(admin1and2 = paste(Admin1, Admin2)) |> 
+    dplyr::ungroup()
+  
+  
+  
+  
+  dfindicator  <<- activityinfo::queryTable("cbumi0ulctcno232",
+                              "CODE" = "cdhugiblctco28h3",
+                              "Subsector" = "cagw22hlctcp2vu5",
+                              "Indicator" = "c1oo0eclctcqtjp8",
+                              "IndicatorType" = "cuskmf7lctcszoga", 
+                              truncateStrings = FALSE) |> 
+    dplyr::rowwise() |> 
+    dplyr::mutate(sectindic = paste(Subsector, Indicator)) |> 
+    dplyr::ungroup()
+  
+  
+  dfpartner <<- activityinfo::queryTable("cvbei1nlct8v92h2s31",
+                          "AOIDORG" = "cnhvpo4kumvyqla8",
+                          "Name" = "ckj5zamkumvyysv9",
+                          "Type" = "c813krekumw0449j",
+                          "RMlead" = "cu2zbr0l1z3adte7", 
+                          truncateStrings = FALSE)
+  
+  result <- list( df5W = df5W,
+                  dfadmin1  = dfadmin1 ,
+                  dfadmin2  = dfadmin2 ,
+                  dfindicator =dfindicator, 
+                  dfpartner = dfpartner )
+  
+ return(result)
+    
+}
+```
+  
+```{r example-fct_read_data}
+result <- fct_read_data()
+## list of results
+
+head(result[["df5W"]], 10)
+head(result[["dfadmin1"]], 10)
+head(result[["dfadmin2"]], 10)
+head(result[["dfindicator"]], 10)
+head(result[["dfpartner"]], 10)
+```
+  
+```{r tests-fct_read_data}
+test_that("fct_read_data works", {
+  expect_true(inherits(fct_read_data, "function")) 
+})
+```
+  
+
+# fct_error_report
+    
+```{r function-fct_error_report}
+#' fct_error_report
+#' 
+#' The functions perform systematic Data Quality Check 
+#' 
+#' @param result output of the previous function fct_read_data()
+#' @param countryname  name of the country to filter the report
+#'                     can be set to "All" - or any of  "Aruba", "Curaçao",
+#'                      "Costa Rica", "Dominican Republic",
+#'                      "Trinidad and Tobago", "Guyana", 
+#'                                   "Mexico", "Panama"
+#'  
+#' @importFrom dplyr arrange mutate  left_join select ungroup 
+#'                    rowwise row_number
+#'                    
+#' @importFrom purrr discard
+#' 
+#' @return result list with results and data error...
+#' 
+#' @export
+fct_error_report <- function(result,
+                             countryname = NULL){
+  
+  ### extract frames...
+  df5W <- result[["df5W"]]
+  dfadmin1 <- result[["dfadmin1"]]
+  dfadmin2 <- result[["dfadmin2"]]
+  dfindicator <- result[["dfindicator"]]
+  dfpartner<- result[["dfpartner"]] 
+  
+  ### Filter the country if needed
+    
+    if (is.null(countryname) || (countryname=="All")) {
+      df5Werror <- df5W   
+    } else {
+      df5Werror <- df5W  |> filter(Country == countryname)    
+    }
+
+  # check if cascading values are matching, concatenate relevent columns
+  df5Werror <- df5Werror  |>
+    dplyr::mutate(countryadmin1 = paste(Country, Admin1),
+           Admin1and2 = paste(Admin1, Admin2),
+           sectorindicator = paste(Subsector, Indicator)) |>
+    dplyr::left_join(dfindicator, by = c("Subsector", "Indicator")) |>
+    dplyr::select(-CODE, -sectindic)
+    
+  
+  # Data wrangling of reference table for quality check
+  # Vectors for verification
+  partnerlist <- unique(as.vector(dfpartner["Name"]))
+  countrylist <- unique(as.vector(dfadmin1["countryadmin1"]))
+  admin2list <- unique(as.vector(dfadmin2["admin1and2"]))
+  sectindiclist <-  as.vector(dfindicator["sectindic"])
+  
+  # Data Quality Check
+  df5Werror <- df5Werror  |>
+    dplyr::rowwise() |>
+    # Where: check missing mandatory fields, Country-Admin1 pairs and Admin1-Admin2 pairs
+    dplyr::mutate(missingcountry = ifelse(is.na(Country) | is.na(Admin1), "Review", ""),
+           countryadmincheck = ifelse(!any(countryadmin1 == countrylist[[1]]), "Review", ""),
+           admin1and2check = ifelse(!is.na(Admin2) & !any(Admin1and2 == admin2list[[1]]), "Review", ""),
+    # Who: Missing values and Org names that are not part of the list
+      miss_appeal_org = ifelse(!is.na(Appealing_org) & any(Appealing_org == partnerlist[[1]]), "", "Review"),
+      miss_setup = ifelse(is.na(Implementation), "Review", ""),
+      miss_implementing_org = ifelse((Implementation == "Yes" & 
+                                        (is.na(Implementing_partner) | !any(Implementing_partner == partnerlist[[1]]))) | 
+                                       (Implementation == "No" & !is.na(Implementing_partner)), "Review", ""),
+    # When: Missing month
+    miss_month = ifelse(is.na(Month), "Review", ""),
+    # What: missing values and inconsistencies in CVA
+    missing_what = ifelse(is.na(Subsector)|is.na(Indicator)|is.na(Activity_Name)| is.na(RMRPActivity)|is.na(CVA), "Review", ""),
+    wrongsectindicator = ifelse(!any(sectorindicator == sectindiclist[[1]]), "Review", ""),
+    # CVA mistakes
+    zeroCVA = ifelse(CVA == "Yes" & (is.na(Value)|  Value == 0), "Review", ""),
+    missingmechanism = ifelse(CVA == "Yes" & is.na(Delivery_mechanism), "Review", ""),
+    CVANotoYes = ifelse((!is.na(Delivery_mechanism) | (!is.na(Value) & Value > 0)) & CVA == "No", "Review", ""),
+    MultipurposeSector = ifelse(Subsector == "Multipurpose Cash Assistance (MPC)" & CVA == "No", "Review", ""),
+    # Output and Breakdown related mistakes. Reviews will be divided according to indicator types
+    # PNiN indicator related mistakes
+    DirectAssistanceNoBenef = ifelse(IndicatorType == 'Direct Assistance' &
+                                       ((is.na(New_beneficiaries) | New_beneficiaries == 0) &
+                                          (is.na(Total_monthly) | Total_monthly == 0)), "Review", ""),
+    NewBenefvstotal = ifelse(IndicatorType == 'Direct Assistance' & New_beneficiaries > Total_monthly, "Review", ""),
+    PopTypeBreakdown = ifelse(IndicatorType == 'Direct Assistance' & New_beneficiaries != sum(IN_DESTINATION,
+                                                                                 IN_TRANSIT,
+                                                                                 Host_Communities,
+                                                                                 PENDULARS,
+                                                                                 Returnees, na.rm = TRUE), "Review", ""),
+    AGDBreakdown = ifelse(IndicatorType == 'Direct Assistance' & New_beneficiaries != sum(Girls,
+                                                                              Boys,
+                                                                              Women,
+                                                                              Men,
+                                                                            Other_under,
+                                                                              Other_above, na.rm = TRUE), "Review", ""),
+    # Capacity Building indicators
+    CBuildingNoBenef = ifelse(IndicatorType == 'Capacity Building' &
+                                (Total_monthly == 0 | is.na(Total_monthly)), "Review", ""),
+    # Todos los otros indicadores
+    NoOutput = ifelse ((IndicatorType != 'Capacity Building' &
+                          IndicatorType != 'Direct Assistance') & 
+                         (Quantity_output == 0 | is.na(Quantity_output)), "Review", ""),
+    Review = NA) |>
+    dplyr::ungroup() |>
+    dplyr::select(-countryadmin1, -Admin1and2, -sectorindicator, -IndicatorType)
+  # Count errors and classify
+  
+  df5Werror$Review[apply(df5Werror, 1, function(r) any(r %in% c("Review"))) == TRUE] <- "Please review activity"
+  
+  # Remove empty errors column for easier reading
+  # Create a row number column 
+  
+  df5Werror <- df5Werror |>
+    dplyr::mutate(id =  dplyr::row_number())
+
+  # split the dataframe in 2
+  df5Werror1 <- df5Werror |>
+    dplyr::select(Country,
+           Admin1,
+           Admin2,
+           Appealing_org,
+           Implementation,
+           Implementing_partner,
+           Month,
+           Subsector,
+           Indicator,
+           Activity_Name,
+           Activity_Description,
+           RMRPActivity,
+           CVA,
+           Value,
+           Delivery_mechanism,
+           Quantity_output,
+           Total_monthly, 
+           New_beneficiaries,
+           IN_DESTINATION,
+           IN_TRANSIT,
+           Host_Communities,
+           PENDULARS,
+           Returnees,  
+           Girls,
+           Boys,
+           Women,
+           Men,
+           Other_under,
+           Other_above,
+           id)
+
+   df5Werror2 <- df5Werror |>
+     dplyr::select(missingcountry,
+            countryadmincheck,
+            admin1and2check,
+            miss_appeal_org,
+            miss_setup,
+            miss_implementing_org,
+            miss_month,
+            missing_what,
+            wrongsectindicator,
+            zeroCVA,
+            missingmechanism,
+            CVANotoYes,           
+             MultipurposeSector,
+             DirectAssistanceNoBenef,
+             NewBenefvstotal,
+             PopTypeBreakdown,
+             AGDBreakdown,
+             CBuildingNoBenef,     
+             NoOutput,
+             Review,
+             id)
+  
+  # remove empty columns
+  df5Werror2 <-  df5Werror2 |> 
+                 purrr::discard(~all(is.na(.) | . ==""))
+ 
+  # join by matching id column
+ 
+ df5Werror0 <- df5Werror1 |>
+   dplyr::left_join(df5Werror2, by = "id") |>
+   dplyr::select(-id)
+ 
+  # print error file
+  # if(write == "yes"){
+  # writexl::write_xlsx(df5Werror0, './out/5WErrorReport.xlsx')
+  # } else {
+  #   
+  # }
+  
+ result$ErrorReportclean <- df5Werror0
+ 
+ # return_data$ErrorReportclean <- df5Werror0
+ # return(return_data)
+ return(result)
+    
+}
+```
+  
+```{r example-fct_error_report}
+## Get data
+result <- fct_read_data()
+## Fix errors
+result <- fct_error_report(result)
+## Display fixed data 
+
+head(result[["ErrorReportclean"]], 10)
+
+```
+  
+```{r tests-fct_error_report}
+test_that("fct_error_report works", {
+  expect_true(inherits(fct_error_report, "function")) 
+})
+```
+
+# fct_aggregate_data
+    
+```{r function-fct_aggregate_data}
+#' fct_aggregate_data
+#' 
+#' Function to aggregate data according to different scenario
+#' 
+
+#' @param result output of the previous function fct_read_data() 
+#'                   and fct_error_report()
+#' @param countryname  name of the country to filter the report
+#'                     can be set to "All" - or any of  "Aruba", "Curaçao",
+#'                      "Costa Rica", "Dominican Republic",
+#'                      "Trinidad and Tobago", "Guyana", 
+#'                                   "Mexico", "Panama"
+#' @param proportions  can be "pin" or "target" - this uses configuration available 
+#'                      within the spreadsheet inst/Proportions.xlsx
+#' @param totalmodel   can be either: 
+#'                     *  "sum":  sums all beneficiaries of all sectors to get
+#'                      intersector figures per admin1 level and then at national level
+#'                     
+#'                     *  "maxsector" : sums all beneficiaries at sector and admin1
+#'                       level, then takethe max of each age and gender categories
+#'                        for each population type to get the intersector figure 
+#'                      
+#'                     *  "southernconemodel" : Mixed approach in 3 steps: 
+#'                     
+#'                     1.Max across Shelter, Food security, Humanitarian transport
+#'                         and WASH 
+#'                         
+#'                     2. Take Protection (General) data  
+#'                     
+#'                     3.  Sum Other sectors mentionned: Integration, 
+#'                         Multipurporse CBI, Health, Education
+#'                     
+#'                     
+#' @importFrom dplyr arrange mutate mutate_if left_join select ungroup 
+#'                    rowwise row_number group_by summarise full_join
+#'                    across where semi_join
+#' @importFrom tibble as_tibble 
+#' @importFrom tidyr replace_na                   
+#' @return list with results
+#' 
+#' @export
+fct_aggregate_data <- function(result,
+                             countryname = NULL, 
+                             proportions = "pin", 
+                             totalmodel = "sum"){
+  
+   ### extract frames...
+  df5W <- result[["df5W"]]
+  dfadmin1 <- result[["dfadmin1"]]
+  dfadmin2 <- result[["dfadmin2"]]
+  dfindicator <- result[["dfindicator"]]
+  dfpartner<- result[["dfpartner"]] 
+  ErrorReportclean <- result[["ErrorReportclean"]]
+  
+  # Filter by the needed country and PiN indicators only
+
+  if (is.null(countryname) || (countryname=="All")) {
+    df5Wconsolidated <<- df5W  |> 
+      dplyr::left_join(dfindicator, by = c("Subsector", "Indicator")) |> 
+      dplyr::select(-CODE, -sectindic) |> 
+      dplyr::filter(IndicatorType == "Direct Assistance" ) |> 
+      dplyr::mutate_if(is.numeric, 
+                       tidyr::replace_na, 
+                       replace = 0)
+  } else {
+    df5Wconsolidated <<- df5W  |>  
+      dplyr::filter(Country == countryname) |> 
+      dplyr::left_join(dfindicator, by = c("Subsector", "Indicator")) |> 
+      dplyr::select(-CODE, -sectindic) |> 
+      dplyr::filter(IndicatorType == "Direct Assistance") |> 
+    dplyr::mutate_if(is.numeric, 
+                       tidyr::replace_na, 
+                        replace = 0)  
+  }
+ 
+  # Create a vector based on Activity's months to the filter the template
+    monthlist <- tibble::as_tibble(unique(df5Wconsolidated["Month"]))
+    
+  # Get consolidated template file
+  #dftemplate <- readxl::read_excel("data/Consolidated_Template.xlsx")
+  dftemplate <- readxl::read_excel( system.file("Consolidated_Template.xlsx", 
+                                                package = "ActivtityInfoQuality") )
+
+
+  if (is.null(countryname) || (countryname=="All")) {
+    dftemplate <- dftemplate |> 
+      dplyr::semi_join(monthlist, by = "Month")
+  } else {
+    dftemplate <- dftemplate |> 
+      dplyr::filter(Country == countryname) |> 
+      dplyr::semi_join(monthlist, by = "Month")
+  }
+
+  # Get proportions file for each sector in Admin1 and poptype categories
+  if (proportions == "pin")  {
+    dfproportions <- readxl::read_excel(
+       system.file("Proportions.xlsx", 
+                   package = "ActivtityInfoQuality"), 
+       sheet = "pinproportions")
+  } else if (proportions == "target") {
+    dfproportions <- readxl::read_excel(
+       system.file("Proportions.xlsx", 
+                   package = "ActivtityInfoQuality"), 
+        sheet = "targetproportions")
+  }
+
+
+#################### 1. Total Monthly figures #################################################################
+
+# Get monthly total figures of persons per Admin1 per sector
+# sum Total beneficiaries of every activities 
+
+monthlysectors <- df5Wconsolidated |> 
+  dplyr::group_by(Country, Admin1, Month, Subsector) |> 
+  dplyr::summarise('Monthly Total Beneficiaries' = sum(Total_monthly))
+
+monthlytotal <- monthlysectors |> 
+  dplyr::group_by(Country, Admin1, Month) |> 
+  dplyr::summarise(Subsector = "Intersector", 
+            'Monthly Total Beneficiaries' = sum(`Monthly Total Beneficiaries`))
+
+monthly<- rbind(monthlysectors, monthlytotal)
+
+# Get CVA Beneficiaries monthly total figures of persons per Admin1 per sector
+# sum Total beneficiaries of every activities 
+
+CVAmonthlysectors <- df5Wconsolidated |> 
+  dplyr::filter(CVA == 'Yes') |> 
+  dplyr::group_by(Country, Admin1, Month, Subsector) |> 
+  dplyr::summarise('Monthly CVA Beneficiaries' = sum(Total_monthly))
+
+CVAmonthlytotal <- CVAmonthlysectors |> 
+  dplyr::group_by(Country, Admin1, Month) |> 
+  dplyr::summarise(Subsector = "Intersector", 
+            'Monthly CVA Beneficiaries' = sum(`Monthly CVA Beneficiaries`))
+
+CVAmonthly<- rbind(CVAmonthlysectors, CVAmonthlytotal)
+
+finalmonthlyadm1 <- monthly |> 
+  dplyr::full_join(CVAmonthly, by = c("Country", "Admin1", "Month", "Subsector")) |> 
+  dplyr::mutate(  dplyr::across( dplyr::where(is.numeric),
+                tidyr::replace_na, 0))
+
+# Get country level data
+
+finalmonthcountry <- finalmonthlyadm1  |> 
+  dplyr::group_by(Country, Month, Subsector) |> 
+  dplyr::summarise(Admin1 = "Country level",
+            'Monthly Total Beneficiaries' = sum(`Monthly Total Beneficiaries`),
+            'Monthly CVA Beneficiaries' = sum(`Monthly CVA Beneficiaries`))
+
+finalmonthlytotal <- rbind(finalmonthlyadm1, finalmonthcountry)
+
+#################### 2. Consolidated figures #################################################################
+
+###### 2.1 Sector level ################
+# Figures at sector and admin1 level are solely calculated through a sum
+# If required by some platform, we can develop a indicator based system tailored for countries.
+
+conssectors <-  df5Wconsolidated |> 
+  dplyr::group_by(Country, Admin1, Month, Subsector) |> 
+  dplyr::summarise(Monthly_Consolidated = sum(New_beneficiaries),
+            Consolidated_RMindestination = sum(IN_DESTINATION), 
+            Consolidated_RM_in_transit = sum(IN_TRANSIT),
+            Consolidated_Host_Community = sum(Host_Communities),
+            Consolidated_RM_Pendulars = sum(PENDULARS),
+            Consolidated_Colombian_Returnees = sum(Returnees),
+            Consolidated_Girls = sum(Girls), 
+            Consolidated_Boys = sum(Boys),
+            Consolidated_Women = sum(Women),
+            Consolidated_Men = sum(Men),
+            Consolidated_Other_under_18 = sum(Other_under),
+            Consolidated_Other_above_18 = sum(Other_above)
+  )
+
+consCVAsectors <- df5Wconsolidated |> 
+  dplyr::filter(CVA == "Yes") |> 
+  dplyr::group_by(Country, Admin1, Month, Subsector) |> 
+  dplyr::summarise(Consolidated_CVA_Beneficiaries = sum(New_beneficiaries))
+
+consallsectors <- conssectors |> 
+  dplyr::full_join(consCVAsectors, by = c("Country", "Admin1", "Month", "Subsector")) |> 
+  dplyr::mutate(dplyr::across( dplyr::where(is.numeric),
+                   tidyr::replace_na, 0))
+
+###### 2.2 Intersector level ################
+# Chose the consoldated model you want to use (see "Consolidated guidance" document 
+# in GitHub repository)
+
+
+# Model 1: Sum All: sums all beneficiaries of all sectors to get intersector figures
+# per admin1 level and then at national level
+if (totalmodel == "sum")
+{
+  conssumadm1 <- consallsectors |> 
+  dplyr::group_by(Country, Admin1, Month) |> 
+  dplyr::summarise(Subsector = "Intersector",
+            Monthly_Consolidated = sum(Monthly_Consolidated),
+            Consolidated_RMindestination = sum( Consolidated_RMindestination), 
+            Consolidated_RM_in_transit = sum(Consolidated_RM_in_transit),
+            Consolidated_Host_Community = sum(Consolidated_Host_Community),
+            Consolidated_RM_Pendulars = sum(Consolidated_RM_Pendulars),
+            Consolidated_Colombian_Returnees = sum(Consolidated_Colombian_Returnees),
+            Consolidated_Girls = sum(Consolidated_Girls), 
+            Consolidated_Boys = sum(Consolidated_Boys),
+            Consolidated_Women = sum( Consolidated_Women),
+            Consolidated_Men = sum(Consolidated_Men),
+            Consolidated_Other_under_18 = sum(Consolidated_Other_under_18),
+            Consolidated_Other_above_18 = sum(Consolidated_Other_above_18),
+            Consolidated_CVA_Beneficiaries = sum(Consolidated_CVA_Beneficiaries)
+            )
+# Join Admin1-Intersector table to Admin1-Sector table
+consfinaladmin1 <- rbind(consallsectors, conssumadm1)
+
+# Sum Admin1 figures for sector and intersector to get the full final table
+consfinalcountrylevel <- consfinaladmin1  |> 
+  dplyr::group_by(Country, Month, Subsector) |> 
+  dplyr::summarise(Admin1 = "Country level",
+            Monthly_Consolidated = sum(Monthly_Consolidated),
+            Consolidated_RMindestination = sum( Consolidated_RMindestination), 
+            Consolidated_RM_in_transit = sum(Consolidated_RM_in_transit),
+            Consolidated_Host_Community = sum(Consolidated_Host_Community),
+            Consolidated_RM_Pendulars = sum(Consolidated_RM_Pendulars),
+            Consolidated_Colombian_Returnees = sum(Consolidated_Colombian_Returnees),
+            Consolidated_Girls = sum(Consolidated_Girls), 
+            Consolidated_Boys = sum(Consolidated_Boys),
+            Consolidated_Women = sum( Consolidated_Women),
+            Consolidated_Men = sum(Consolidated_Men),
+            Consolidated_Other_under_18 = sum(Consolidated_Other_under_18),
+            Consolidated_Other_above_18 = sum(Consolidated_Other_above_18),
+            Consolidated_CVA_Beneficiaries = sum(Consolidated_CVA_Beneficiaries)
+  )
+
+consfinal <- rbind(consfinaladmin1, consfinalcountrylevel) |> 
+  dplyr::arrange(Country, Admin1)
+}
+
+if (totalmodel == "maxsector")
+  { 
+  # Model 2: Max Sector: sums all beneficiaries at sector and admin1 level, then take
+  # the max of each age and gender categories for each population type to get the intersector figure
+  
+  consmaxmerge <- consallsectors |> 
+  dplyr::left_join(dfproportions, by = c("Country", "Admin1", "Subsector")) |> 
+  # Drop AGD Categories as they will be substituted in the final file
+  dplyr::select(-Consolidated_Girls, 
+         -Consolidated_Boys, 
+         -Consolidated_Women, 
+         -Consolidated_Men, 
+         -Consolidated_Other_above_18, 
+         -Consolidated_Other_under_18) |> 
+  # get the breakdown of each age and gender categories by multiplying the pop type category by the proportions
+  rowwise() |> 
+  dplyr::mutate(RMDestGirls = round(Consolidated_RMindestination * Dest_GIrls,0),
+         RMDestBoys = round(Consolidated_RMindestination * Dest_Boys,0),
+         RMDestWomen = round(Consolidated_RMindestination * Dest_Women,0),
+         RMDestMen = round(Consolidated_RMindestination * Dest_Men,0),
+         RMTransitGirls = round(Consolidated_RM_in_transit * Transit_GIrls,0),
+         RMTransitBoys = round(Consolidated_RM_in_transit * Transit_Boys,0),
+         RMTransitWomen = round(Consolidated_RM_in_transit * Transit_Women,0),
+         RMTransitMen = round(Consolidated_RM_in_transit * Transit_Men,0),
+         RMHCGirls = round(Consolidated_Host_Community * HC_Girls,0),
+         RMHCBoys = round(Consolidated_Host_Community * HC_Boys,0),
+         RMHCWomen = round(Consolidated_Host_Community * HC_Women,0),
+         RMHCMen = round(Consolidated_Host_Community * HC_Men,0),
+         RMPendularGirls = round(Consolidated_RM_Pendulars * Pendular_Girls,0),
+         RMPendularBoys = round(Consolidated_RM_Pendulars * Pendular_Boys,0),
+         RMPendularWomen = round(Consolidated_RM_Pendulars * Pendular_Women,0),
+         RMPendularMen = round(Consolidated_RM_Pendulars * Pendular_Men,0),
+         RMReturneesGirls = round(Consolidated_Colombian_Returnees*Returnees_Girls,0),
+         RMReturneesBoys = round(Consolidated_Colombian_Returnees*Returnees_Boys,0),
+         RMReturneesWomen = round(Consolidated_Colombian_Returnees*Returnees_Women,0),
+         RMReturneesMen = round(Consolidated_Colombian_Returnees*Returnees_Men,0)) |> 
+  dplyr::ungroup() |> 
+  dplyr::select(-(5:10),-(12:35)) |> 
+  dplyr::group_by(Country, Admin1, Month) |> 
+  # Get MAX Values for each Age and Gender categories in each population type
+  dplyr::summarise(Subsector = "Intersector",
+            RMDestGirls = max(RMDestGirls),
+            RMDestBoys = max(RMDestBoys),
+            RMDestWomen = max(RMDestWomen),
+            RMDestMen = max(RMDestMen),
+            RMTransitGirls = max(RMTransitGirls),
+            RMTransitBoys = max(RMTransitBoys),
+            RMTransitWomen =max(RMTransitWomen),
+            RMTransitMen = max(RMTransitMen),
+            RMHCGirls = max(RMHCGirls),
+            RMHCBoys = max(RMHCBoys),
+            RMHCWomen = max(RMHCWomen),
+            RMHCMen = max(RMHCMen),
+            RMPendularGirls = max(RMPendularGirls),
+            RMPendularBoys = max(RMPendularBoys),
+            RMPendularWomen = max(RMPendularWomen),
+            RMPendularMen = max(RMPendularMen),
+            RMReturneesGirls = max(RMReturneesGirls),
+            RMReturneesBoys = max(RMReturneesBoys),
+            RMReturneesWomen = max(RMReturneesWomen),
+            RMReturneesMen =max(RMReturneesMen),
+            Consolidated_CVA_Beneficiaries = max(Consolidated_CVA_Beneficiaries)) |> 
+  # Sum values to determine the totals
+  dplyr::rowwise() |> 
+  dplyr::mutate(Consolidated_RMindestination = sum(RMDestGirls, RMDestBoys, RMDestWomen, RMDestMen, na.rm = TRUE),
+         Consolidated_RM_in_transit = sum(RMTransitGirls, RMTransitBoys, RMTransitWomen, RMTransitMen, na.rm = TRUE),
+         Consolidated_Host_Community = sum(RMHCGirls, RMHCBoys, RMHCWomen, RMHCMen, na.rm = TRUE),
+         Consolidated_RM_Pendulars = sum(RMPendularGirls, RMPendularBoys, RMPendularWomen, RMPendularMen, na.rm = TRUE),
+         Consolidated_Colombian_Returnees = sum(RMReturneesGirls, RMReturneesBoys, RMReturneesWomen, RMReturneesMen, na.rm = TRUE),
+         Consolidated_Girls = sum(RMDestGirls, RMTransitGirls, RMHCGirls, RMPendularGirls, RMReturneesGirls, na.rm = TRUE),
+         Consolidated_Boys = sum(RMDestBoys, RMTransitBoys, RMHCBoys, RMPendularBoys, RMReturneesBoys, na.rm = TRUE),
+         Consolidated_Women = sum(RMDestWomen, RMTransitWomen, RMHCWomen, RMPendularWomen, RMReturneesWomen, na.rm = TRUE),
+         Consolidated_Men = sum(RMDestMen, RMTransitMen, RMHCMen, RMPendularMen, RMReturneesMen, na.rm = TRUE),
+         Consolidated_Other_under_18 = 0,
+         Consolidated_Other_above_18 = 0) |> 
+  # Drop extra column of breakdown values and reorder to match original format
+  dplyr::select(-(5:24)) |> 
+  # Get final Monthly Consolidated figures for Intersector
+  dplyr::mutate(Monthly_Consolidated = sum(Consolidated_RMindestination, Consolidated_RM_in_transit,
+                                    Consolidated_Host_Community,Consolidated_RM_Pendulars,
+                                    Consolidated_Colombian_Returnees, na.rm = TRUE)) |> 
+  dplyr::ungroup()
+
+  consmaxfinaladmin1 <- rbind(consallsectors, consmaxmerge)
+  
+  consmaxfinalcountry <- consmaxfinaladmin1  |> 
+    dplyr::group_by(Country, Month, Subsector) |> 
+    dplyr::summarise(Admin1 = "Country level",
+              Monthly_Consolidated = sum(Monthly_Consolidated),
+              Consolidated_RMindestination = sum(Consolidated_RMindestination),
+              Consolidated_RM_in_transit = sum(Consolidated_RM_in_transit),
+              Consolidated_Host_Community = sum(Consolidated_Host_Community),
+              Consolidated_RM_Pendulars = sum(Consolidated_RM_Pendulars),
+              Consolidated_Colombian_Returnees = sum(Consolidated_Colombian_Returnees),
+              Consolidated_Girls = sum(Consolidated_Girls),
+              Consolidated_Boys = sum(Consolidated_Boys),
+              Consolidated_Women = sum(Consolidated_Women),
+              Consolidated_Men = sum(Consolidated_Men),
+              Consolidated_Other_under_18 = sum(Consolidated_Other_under_18),
+              Consolidated_Other_above_18 = sum(Consolidated_Other_above_18),
+              Consolidated_CVA_Beneficiaries = sum(Consolidated_CVA_Beneficiaries))
+
+   consfinal <- rbind(consmaxfinaladmin1, consmaxfinalcountry)  
+}
+   
+   if (totalmodel == "southernconemodel")
+     {
+     # Model 3: Mixed approach in 3 steps:
+     # Max across Shelter, Food security, Humanitarian transport and WASH
+     # Take Protection (General) data
+     # Sum Other sectors mentionned: Integration, Multipurporse CBI, Health, Education
+     
+     # Step1: Get data Max across Food Security, Shelter, Humanitarian transport and WASH
+     consCSstep1 <- consallsectors |> 
+     dplyr::filter(Subsector %in% c("Shelter", "Humanitarian Transportation", "WASH", "Food Security")) |> 
+     dplyr::left_join(dfproportions, by = c("Country", "Admin1", "Subsector")) |> 
+     # Drop AGD Categories as they will be substituted in the final file
+     dplyr::select(-Consolidated_Girls, 
+            -Consolidated_Boys, 
+            -Consolidated_Women, 
+            -Consolidated_Men, 
+            -Consolidated_Other_above_18, 
+            -Consolidated_Other_under_18) |> 
+     # get the breakdown of each age and gender categories by multiplying the pop type category by the proportions
+     dplyr::rowwise() |> 
+     dplyr::mutate(RMDestGirls = round(Consolidated_RMindestination * Dest_GIrls,0),
+            RMDestBoys = round(Consolidated_RMindestination * Dest_Boys,0),
+            RMDestWomen = round(Consolidated_RMindestination * Dest_Women,0),
+            RMDestMen = round(Consolidated_RMindestination * Dest_Men,0),
+            RMTransitGirls = round(Consolidated_RM_in_transit * Transit_GIrls,0),
+            RMTransitBoys = round(Consolidated_RM_in_transit * Transit_Boys,0),
+            RMTransitWomen = round(Consolidated_RM_in_transit * Transit_Women,0),
+            RMTransitMen = round(Consolidated_RM_in_transit * Transit_Men,0),
+            RMHCGirls = round(Consolidated_Host_Community * HC_Girls,0),
+            RMHCBoys = round(Consolidated_Host_Community * HC_Boys,0),
+            RMHCWomen = round(Consolidated_Host_Community * HC_Women,0),
+            RMHCMen = round(Consolidated_Host_Community * HC_Men,0),
+            RMPendularGirls = round(Consolidated_RM_Pendulars * Pendular_Girls,0),
+            RMPendularBoys = round(Consolidated_RM_Pendulars * Pendular_Boys,0),
+            RMPendularWomen = round(Consolidated_RM_Pendulars * Pendular_Women,0),
+            RMPendularMen = round(Consolidated_RM_Pendulars * Pendular_Men,0),
+            RMReturneesGirls = round(Consolidated_Colombian_Returnees*Returnees_Girls,0),
+            RMReturneesBoys = round(Consolidated_Colombian_Returnees*Returnees_Boys,0),
+            RMReturneesWomen = round(Consolidated_Colombian_Returnees*Returnees_Women,0),
+            RMReturneesMen = round(Consolidated_Colombian_Returnees*Returnees_Men,0)) |> 
+     dplyr::ungroup() |> 
+     dplyr::select(-(5:10),-(12:35)) |> 
+     dplyr::group_by(Country, Admin1, Month) |> 
+     # Get MAX Values for each Age and Gender categories in each population type
+     dplyr::summarise(Subsector = "Intersector",
+               RMDestGirls = max(RMDestGirls),
+               RMDestBoys = max(RMDestBoys),
+               RMDestWomen = max(RMDestWomen),
+               RMDestMen = max(RMDestMen),
+               RMTransitGirls = max(RMTransitGirls),
+               RMTransitBoys = max(RMTransitBoys),
+               RMTransitWomen =max(RMTransitWomen),
+               RMTransitMen = max(RMTransitMen),
+               RMHCGirls = max(RMHCGirls),
+               RMHCBoys = max(RMHCBoys),
+               RMHCWomen = max(RMHCWomen),
+               RMHCMen = max(RMHCMen),
+               RMPendularGirls = max(RMPendularGirls),
+               RMPendularBoys = max(RMPendularBoys),
+               RMPendularWomen = max(RMPendularWomen),
+               RMPendularMen = max(RMPendularMen),
+               RMReturneesGirls = max(RMReturneesGirls),
+               RMReturneesBoys = max(RMReturneesBoys),
+               RMReturneesWomen = max(RMReturneesWomen),
+               RMReturneesMen =max(RMReturneesMen),
+               Consolidated_CVA_Beneficiaries = max(Consolidated_CVA_Beneficiaries)) |> 
+     # Sum values to determine the totals
+     dplyr::rowwise() |> 
+     dplyr::mutate(Consolidated_RMindestination = sum(RMDestGirls, RMDestBoys, RMDestWomen, RMDestMen, na.rm = TRUE),
+            Consolidated_RM_in_transit = sum(RMTransitGirls, RMTransitBoys, RMTransitWomen, RMTransitMen, na.rm = TRUE),
+            Consolidated_Host_Community = sum(RMHCGirls, RMHCBoys, RMHCWomen, RMHCMen, na.rm = TRUE),
+            Consolidated_RM_Pendulars = sum(RMPendularGirls, RMPendularBoys, RMPendularWomen, RMPendularMen, na.rm = TRUE),
+            Consolidated_Colombian_Returnees = sum(RMReturneesGirls, RMReturneesBoys, RMReturneesWomen, RMReturneesMen, na.rm = TRUE),
+            Consolidated_Girls = sum(RMDestGirls, RMTransitGirls, RMHCGirls, RMPendularGirls, RMReturneesGirls, na.rm = TRUE),
+            Consolidated_Boys = sum(RMDestBoys, RMTransitBoys, RMHCBoys, RMPendularBoys, RMReturneesBoys, na.rm = TRUE),
+            Consolidated_Women = sum(RMDestWomen, RMTransitWomen, RMHCWomen, RMPendularWomen, RMReturneesWomen, na.rm = TRUE),
+            Consolidated_Men = sum(RMDestMen, RMTransitMen, RMHCMen, RMPendularMen, RMReturneesMen, na.rm = TRUE),
+            Consolidated_Other_under_18 = 0,
+            Consolidated_Other_above_18 = 0) |> 
+     # Drop extra column of breakdown values and reorder to match original format
+     dplyr::select(-(5:24)) |> 
+     # Get final Monthly Consolidated figures for Intersector
+     dplyr::mutate(Monthly_Consolidated = sum(Consolidated_RMindestination, Consolidated_RM_in_transit,
+                                       Consolidated_Host_Community,Consolidated_RM_Pendulars,
+                                       Consolidated_Colombian_Returnees, na.rm = TRUE)) |> 
+     dplyr::ungroup()
+   
+   # Step 2: Protection (General) data
+   consCSstep2 <- consallsectors |> 
+     dplyr::filter(Subsector== "Protection (General)") |> 
+     dplyr::group_by(Country, Admin1, Month) |> 
+     dplyr::summarise(Subsector = "Intersector",
+               Monthly_Consolidated = sum(Monthly_Consolidated),
+               Consolidated_RMindestination = sum( Consolidated_RMindestination), 
+               Consolidated_RM_in_transit = sum(Consolidated_RM_in_transit),
+               Consolidated_Host_Community = sum(Consolidated_Host_Community),
+               Consolidated_RM_Pendulars = sum(Consolidated_RM_Pendulars),
+               Consolidated_Colombian_Returnees = sum(Consolidated_Colombian_Returnees),
+               Consolidated_Girls = sum(Consolidated_Girls), 
+               Consolidated_Boys = sum(Consolidated_Boys),
+               Consolidated_Women = sum( Consolidated_Women),
+               Consolidated_Men = sum(Consolidated_Men),
+               Consolidated_Other_under_18 = sum(Consolidated_Other_under_18),
+               Consolidated_Other_above_18 = sum(Consolidated_Other_above_18),
+               Consolidated_CVA_Beneficiaries = sum(Consolidated_CVA_Beneficiaries))
+   
+   # Step 3: sum data for all the other sector: Integration, Multipurporse CBI, Health, Education
+   consCSstep3 <- consallsectors |> 
+     dplyr::filter(Subsector %in% c("Multipurpose Cash Assistance (MPC)", "Integration", "Health", "Education")) |> 
+     dplyr::group_by(Country, Admin1, Month) |> 
+     dplyr::summarise(Subsector = "Intersector",
+               Monthly_Consolidated = sum(Monthly_Consolidated),
+               Consolidated_RMindestination = sum( Consolidated_RMindestination), 
+               Consolidated_RM_in_transit = sum(Consolidated_RM_in_transit),
+               Consolidated_Host_Community = sum(Consolidated_Host_Community),
+               Consolidated_RM_Pendulars = sum(Consolidated_RM_Pendulars),
+               Consolidated_Colombian_Returnees = sum(Consolidated_Colombian_Returnees),
+               Consolidated_Girls = sum(Consolidated_Girls), 
+               Consolidated_Boys = sum(Consolidated_Boys),
+               Consolidated_Women = sum( Consolidated_Women),
+               Consolidated_Men = sum(Consolidated_Men),
+               Consolidated_Other_under_18 = sum(Consolidated_Other_under_18),
+               Consolidated_Other_above_18 = sum(Consolidated_Other_above_18),
+               Consolidated_CVA_Beneficiaries = sum(Consolidated_CVA_Beneficiaries))
+   # Merge the 3 separate steps in a single file and sum the beneficiaries for intersector at Admin1
+   consCSadmin1 <- rbind(consCSstep1, consCSstep2, consCSstep3) |> 
+     dplyr::group_by(Country, Admin1, Month) |> 
+     dplyr::summarise(Subsector = "Intersector",
+               Monthly_Consolidated = sum(Monthly_Consolidated),
+               Consolidated_RMindestination = sum( Consolidated_RMindestination), 
+               Consolidated_RM_in_transit = sum(Consolidated_RM_in_transit),
+               Consolidated_Host_Community = sum(Consolidated_Host_Community),
+               Consolidated_RM_Pendulars = sum(Consolidated_RM_Pendulars),
+               Consolidated_Colombian_Returnees = sum(Consolidated_Colombian_Returnees),
+               Consolidated_Girls = sum(Consolidated_Girls), 
+               Consolidated_Boys = sum(Consolidated_Boys),
+               Consolidated_Women = sum( Consolidated_Women),
+               Consolidated_Men = sum(Consolidated_Men),
+               Consolidated_Other_under_18 = sum(Consolidated_Other_under_18),
+               Consolidated_Other_above_18 = sum(Consolidated_Other_above_18),
+               Consolidated_CVA_Beneficiaries = sum(Consolidated_CVA_Beneficiaries))
+
+   consCSAdminFull <- rbind(consCSadmin1, consallsectors)
+   
+  # Get country level figures
+   consCScountry <- consCSAdminFull  |> 
+     dplyr::group_by(Country, Month, Subsector) |> 
+     dplyr::summarise(Admin1 = "Country level",
+               Monthly_Consolidated = sum(Monthly_Consolidated),
+               Consolidated_RMindestination = sum(Consolidated_RMindestination),
+               Consolidated_RM_in_transit = sum(Consolidated_RM_in_transit),
+               Consolidated_Host_Community = sum(Consolidated_Host_Community),
+               Consolidated_RM_Pendulars = sum(Consolidated_RM_Pendulars),
+               Consolidated_Colombian_Returnees = sum(Consolidated_Colombian_Returnees),
+               Consolidated_Girls = sum(Consolidated_Girls),
+               Consolidated_Boys = sum(Consolidated_Boys),
+               Consolidated_Women = sum(Consolidated_Women),
+               Consolidated_Men = sum(Consolidated_Men),
+               Consolidated_Other_under_18 = sum(Consolidated_Other_under_18),
+               Consolidated_Other_above_18 = sum(Consolidated_Other_above_18),
+               Consolidated_CVA_Beneficiaries = sum(Consolidated_CVA_Beneficiaries))
+   # Merge admin1 and country level figures final file
+   consfinal <- rbind(consCSAdminFull, consCScountry)
+}
+
+##### Back to common consolidation process #############
+
+  # Merge the tables before merging to template and final cleaning
+   
+   consfullmodel <- consfinal  |> 
+     dplyr::full_join(finalmonthlytotal, by = c("Country", "Admin1", "Month", "Subsector"))
+
+  # For countries with no admin1, filter out to only keep the "Country level" data
+  countrynoadmin1 <- c("Aruba", "Curaçao", "Costa Rica", "Dominican Republic",
+                       "Trinidad and Tobago", "Guyana", 
+                     "Mexico", "Panama")
+
+    if( is.null(countryname) ) {
+      consfullmodel <- consfullmodel
+    } else  {
+      if (     countryname %in% countrynoadmin1){
+      consfullmodel <- consfullmodel |> 
+        dplyr::filter(Admin1 == "Country level") 
+      } else { 
+      consfullmodel <- consfullmodel}
+     }
+
+  # Merge with template
+   consolidated_report <- dftemplate  |> 
+     dplyr::full_join(consfullmodel, 
+                      by = c("Country", "Admin1", "Month", "Subsector")) |> 
+     dplyr::mutate_if(is.numeric,
+                      ~replace(., is.na(.), 0))
+   
+  # Do the cumulative sum for the consolidated columns
+   
+   FinalConsolidated <- consolidated_report |> 
+     dplyr::group_by(Country, Admin1, Subsector) |> 
+     dplyr::arrange(Country, Admin1, Month) |> 
+     dplyr::mutate('Consolidated Total' = cumsum(Monthly_Consolidated),
+            'Consolidated In Destination' = cumsum(Consolidated_RMindestination),
+            'Consolidated In Transit' = cumsum(Consolidated_RM_in_transit),
+            'Consolidated Host Communities' = cumsum(Consolidated_Host_Community),
+            'Consolidated Pendular' = cumsum(Consolidated_RM_Pendulars),
+            'Consolidated Returnees' = cumsum(Consolidated_Colombian_Returnees),
+            'Consolidated Girls' = cumsum(Consolidated_Girls),
+            'Consolidated Boys' = cumsum(Consolidated_Boys),
+            'Consolidated Women' = cumsum(Consolidated_Women),
+            'Consolidated Men' = cumsum(Consolidated_Men),
+            'Consolidated Other under 18' = cumsum(Consolidated_Other_under_18),
+            'Consolidated Other above 18' = cumsum(Consolidated_Other_above_18),
+            'Consolidated CVA Beneficiaries' = cumsum(Consolidated_CVA_Beneficiaries)) |> 
+     dplyr::rowwise() |> 
+     # Add 3 columns to check if the breakdowns are correct. 
+     dplyr::mutate('Check PopType Breakdown' = ifelse(`Consolidated Total` == 0 | (`Consolidated Total` > 0 & 
+                                                                              `Consolidated Total` == sum(`Consolidated In Destination`,
+                                                                                                          `Consolidated In Transit`,
+                                                                                                          `Consolidated Host Communities`,
+                                                                                                          `Consolidated Pendular`,
+                                                                                                          `Consolidated Returnees`,
+                                                                                                          na.rm = TRUE)), "Ok", "Check Population Type breakdown"),
+            'Check AGD Breakdown' = ifelse(`Consolidated Total` == 0 |
+                                             (`Consolidated Total` > 0 & 
+                                              `Consolidated Total`== sum(`Consolidated Girls`,
+                                                                                                     `Consolidated Boys`,
+                                                                                                     `Consolidated Women`,
+                                                                                                     `Consolidated Men`,
+                                                                                                     `Consolidated Other under 18`,
+                                                                                                     `Consolidated Other above 18`,
+                                                                                                     na.rm = TRUE)), "Ok", "Check AGD breakdown"),
+            'Check CVA higher Total' = ifelse(`Consolidated CVA Beneficiaries` > `Consolidated Total`, "CVA Value higher than total", "ok")) |> 
+     dplyr::ungroup() |> 
+     dplyr::select(Platform,
+            Country,
+            Admin1,
+            Month,
+            Subsector,
+            `Monthly Total Beneficiaries`,
+            `Monthly CVA Beneficiaries`,
+            `Consolidated Total`,
+            `Consolidated In Destination`,
+            `Consolidated In Transit`,
+            `Consolidated Host Communities`,
+            `Consolidated Pendular`,
+            `Consolidated Returnees`,
+            `Consolidated Girls`,
+            `Consolidated Boys`,
+            `Consolidated Women`,
+            `Consolidated Men`,
+            `Consolidated Other under 18`,
+            `Consolidated Other above 18`,
+            `Consolidated CVA Beneficiaries`,
+            `Check PopType Breakdown`, 
+            `Check AGD Breakdown`,
+            `Check CVA higher Total`)
+            
+   result$ConsolidatedReport <- FinalConsolidated
+   return(result)
+    
+}
+```
+  
+```{r example-fct_aggregate_data}
+
+result <- fct_read_data()
+## Fix errors
+result2 <- fct_error_report(result)
+
+## Check all 6 combinations...
+
+### Combination 1
+resultpinsum <- fct_aggregate_data(result = result2,
+                             countryname = NULL, 
+                             proportions = "pin", # r "target"  
+                             totalmodel = "sum"  # or  "maxsector"  or "southernconemodel" 
+)
+
+head(resultpinsum[["ConsolidatedReport"]], 10)
+
+### Combination 2
+resulttargetsum <- fct_aggregate_data(result2,
+                             countryname = NULL, 
+                             proportions = "target", # r "target"  
+                             totalmodel = "sum"  # or  "maxsector"  or "southernconemodel" 
+)
+
+head(resulttargetsum[["ConsolidatedReport"]], 10)
+
+
+### Combination 3
+resultpinmaxsector <- fct_aggregate_data(result2,
+                             countryname = NULL, 
+                             proportions = "pin", # r "target"  
+                             totalmodel = "maxsector"  # or  "maxsector"  or "southernconemodel" 
+)
+
+head(resultpinmaxsector[["ConsolidatedReport"]], 10)
+
+
+### Combination 4
+resulttargetmaxsector<- fct_aggregate_data(result2,
+                             countryname = NULL, 
+                             proportions = "target", # r "target"  
+                             totalmodel = "maxsector"  # or  "maxsector"  or "southernconemodel" 
+)
+
+head(resulttargetmaxsector[["ConsolidatedReport"]], 10)
+
+
+### Combination 5
+resultpinsouthernconemodel <- fct_aggregate_data(result2,
+                             countryname = NULL, 
+                             proportions = "pin", # r "target"  
+                             totalmodel = "southernconemodel"  # or  "maxsector"  or "southernconemodel" 
+)
+
+head(resultpinsouthernconemodel[["ConsolidatedReport"]], 10)
+
+
+### Combination 6
+resulttargetsouthernconemodel <- fct_aggregate_data(result2,
+                             countryname = NULL, 
+                             proportions = "target", # r "target"  
+                             totalmodel = "southernconemodel"  # or  "maxsector"  or "southernconemodel" 
+)
+
+head(resulttargetsouthernconemodel[["ConsolidatedReport"]], 10)
+
+
+
+
+```
+  
+```{r tests-fct_aggregate_data}
+test_that("fct_aggregate_data works", {
+  expect_true(inherits(fct_aggregate_data, "function")) 
+})
+```
+  
+  
+
+
+
+```{r development-inflate, eval=FALSE}
+# Run but keep eval=FALSE to avoid infinite loop
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/function_documentation.Rmd", vignette_name = "Development")
+```
+
