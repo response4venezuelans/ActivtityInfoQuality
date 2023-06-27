@@ -13,9 +13,12 @@ Imports:
     devtools,
     dplyr,
     DT,
+    ggplot2,
     golem,
+    plotly,
     purrr,
     readxl,
+    scales,
     shiny,
     shinydashboard,
     shinydashboardPlus,
@@ -24,7 +27,9 @@ Imports:
     tibble,
     tidyr,
     tidyverse,
-    unhcrshiny
+    unhcrshiny,
+    unhcrthemes,
+    writexl
 Suggests: 
     knitr,
     rmarkdown,

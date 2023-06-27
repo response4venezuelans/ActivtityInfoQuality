@@ -14,86 +14,104 @@ mod_error_report_ui <- function(id) {
 	tabItem(
 		tabName = "error_report",
 		fluidRow(
-		  column(
-		    width = 6,
-		    shinydashboard::box(
-		      id = "box_2",
-		      title = "Error Report and cleaning scripts",
-		      solidHeader = T,
-		      collapsible = T,
-		      collapsed = F,
-		      width = 16,
-		      status = "primary",
-		      p("Configure cleaning script"),
+		  shinydashboard::box(
+		    id = "box_2",
+		    title = "Data Quality Assurance",
+		    solidHeader = FALSE,
+		    collapsible = T,
+		    collapsed = F,
+		    width = 12,
+		    status = "primary",
+		    fluidRow(
+		     column(
+		     width = 3,
+		      p("Configure cleaning"),
 		      br(),
-  		    selectInput(inputId = ns("country_name"),
+  		    selectInput(inputId = ns("countryname"),
   		                    label = "Country Name", 
-  		                    choices =  "NULL"  ),
+  		                    choices =  c("All", "Argentina") ,
+  		                selected ="All"),
 		      br(),
 		      actionButton( inputId = ns("run_err_report"),
-		        label = "Run Script",
-		        icon = icon("black-tie") ),
-		      br(),
-		      downloadButton(outputId =  ns("downloadprecleaned"),
-		                     label = "Download Error report" )
-		    )
-		  ),
-		  column(
-		    width = 6,
-		    shinydashboard::box(
-		      id = "box_3",
-		      title = "Summary Figures",
-		      solidHeader = T,
-		      collapsible = T,
-		      collapsed = F,
-		      width = 16,
-		      status = "warning",
-		      p("Number or Activities"),
-		      h2(textOutput( ns("Number_of_Activities")  )),
-		      p("Number of activities to review"),
-		      h2(textOutput( ns("Number_of_Errors_Pre") )),
-		      p("Percentage of errors"),
-		      h2(textOutput(ns("Percentage_of_Errors") )),
+		        label = " Apply filter ",
+		        icon = icon("filter") ),
+		      br() #,
+		      # downloadButton(outputId =  ns("downloadprecleaned"),
+		      #                label = "Download Error report" ) 
+		     ),
+		     column(
+		       width = 3,
+		      valueBoxOutput(
+		        outputId = ns("vActivities"),
+		        width = NULL) 
+		      ),
+		     column(
+		       width = 3,
+		      valueBoxOutput(
+		        outputId = ns("vErrors"),
+		        width = NULL)
+		     ),
+		     column(
+		       width = 3,
+		      valueBoxOutput(
+		        outputId = ns("vPercentage"),
+		        width = NULL)
+		     ) 
 		    )
 		  )
+		 # ) ,
+		  # column(
+		  #   width = 6,
+		  #   shinydashboard::box(
+		  #     id = "box_3",
+		  #     title = "Summary Figures",
+		  #     solidHeader = F,
+		  #     collapsible = T,
+		  #     collapsed = F,
+		  #     width = 16,
+		  #     status = "warning",
+		  #     p("Number or Activities"),
+		  #     h2(textOutput( ns("Number_of_Activities")  )),
+		  #     p("Number of activities to review"),
+		  #     h2(textOutput( ns("Number_of_Errors_Pre") )),
+		  #     p("Percentage of errors"),
+		  #     h2(textOutput(ns("Percentage_of_Errors") )),
+		  #   )
+		  # )
 		),
-		
 		fluidRow(
 		  column(
 		    width = 12,
 		    shinydashboard::box(
 		      id = "box_14",
-		      title = "Plots  errors per Organisation and Country",
-		      solidHeader = T,
+		      title = "Output",
+		      solidHeader = FALSE,
 		      collapsible = T,
 		      collapsed = F,
 		      width = 12,
 		      status = "primary",
-		      fluidRow(
-		        column(
-		          width = 6, 
-		          plotly::plotlyOutput(ns("plot")) ),
-		        column(
-		          width = 6, 
-		          plotly::plotlyOutput(ns("plot2") )
-		          )
-		        )
-		    )
-		  )
-		),
-		
-		fluidRow(
-		  column(
-		    width = 12,
-		    shinydashboard::box(
-		      id = "box_4",
-		      title = "Preview error report table",
-		      solidHeader = T,
-		      collapsible = T,
-		      collapsed = F,
-		      width = 12,
-		      status = "primary",
-		      DT::dataTableOutput( ns("Preview_Error_Report") )
+		      tabsetPanel(type = "tabs",
+		                  tabPanel(title= "Plots  errors",
+		                           fluidRow(
+		                             column(
+		                               width = 6, 
+		                               plotly::plotlyOutput(
+		                                 outputId = ns("plot")) ,
+		                                 height = "550px"),
+		                             column(
+		                               width = 6, 
+		                               plotly::plotlyOutput(
+		                                 outputId =ns("plot2"),
+		                                 height = "550px" )
+		                             )
+		                           )
+		                  ),
+		                  tabPanel(title= "Table", 
+		                           downloadButton(outputId =  ns("downloadprecleaned"),
+		                                          label = "Download Error report" ) ,
+		                           DT::dataTableOutput( ns("Preview_Error_Report") )
+		                  )
+		      )
 		    )
 		  )
 		)
@@ -111,59 +129,55 @@ mod_error_report_ui <- function(id) {
  
 mod_error_report_server <- function(input, output, session, AppReactiveValue) {
 	ns <- session$ns
-	
-	
- 
 
-	
 	## trigger the function for error check
 	observeEvent(input$run_err_report,{
-	  tocheck <- AppReactiveValue$result
-	  Error_report <- fct_error_report(tocheck,
-	                             countryname = input$country_name)
+	  #tocheck <- AppReactiveValue$result
+	  #AppReactiveValue$result <- Error_report 
+	  AppReactiveValue$result <- fct_error_report(
+	                             result = AppReactiveValue$result,
+	                             countryname = input$countryname)
 	  
-	  Error_Download<- Error_report[["ErrorReportclean"]] 
-	  AppReactiveValue$result <- Error_report 
 	})
-	  
+	 
 	 #  output number of activities and error 
-	 output$Number_of_Activities <- renderText({
-	    nrow(Error_report$ErrorReportclean)
-	    })
-	  
-	 output$Number_of_Errors_Pre <- renderText({
-	    sum(!is.na(Error_report$ErrorReportclean$Review))
-	    })
-	  
-	 output$Percentage_of_Errors <- renderText( {
-	    round(
-	      sum(!is.na(Error_report$ErrorReportclean$Review))
-	          /nrow(Error_report$ErrorReportclean) * 100, 
-	      digits = 1)
-	   })
+	 output$vActivities <- renderValueBox({
+	   valueBox(
+	     value =  AppReactiveValue$vActivities ,
+	     subtitle =  "Number or Activities",
+    	   icon = icon("location-dot"),
+    	   color = "aqua"
+    	   )
+	 })
+	 
+	 output$vErrors <- renderValueBox({
+	   valueBox(
+	     value = AppReactiveValue$vErrors , 
+	     subtitle = "Activities to review", 
+    	   icon = icon("list"),
+    	   color = "orange"
+    	   )
+	 })
+	 
+	 output$vPercentage <- renderValueBox({
+	   valueBox(
+	     value =  AppReactiveValue$vPercentage,
+	     subtitle =  "Percentage of errors", 
+    	   icon = icon("triangle-exclamation"),
+    	   color = "purple"
+    	   )
+	 })
 	  
 	 # interactive plot with plotly
 	  output$plot <- plotly::renderPlotly({
-	    AppReactiveValue$result$ErrorReportclean |>
-	      filter(!is.na(Review)) |>
-	      ggplot() +
-	      aes(x = Appealing_org, size = Review) +
-	      geom_bar(fill = "#0c4c8a") +
-	      coord_flip() +
-	      theme_minimal()
+	    AppReactiveValue$result$plot_Country
 	    })
 	  
 	  output$plot2 <- plotly::renderPlotly({
-	    AppReactiveValue$result$ErrorReportclean |>
-	      filter(!is.na(Review)) |>
-	      ggplot() +
-	      aes(x = Country, size = Review) +
-	      geom_bar(fill = "#0c4c8a") +
-	      coord_flip() +
-	      theme_minimal()
+	    AppReactiveValue$result$plot_Appealing
 	    })
 	  
-	showNotification("Successful",duration = 10, type = "error")
+	#showNotification("Successful",duration = 10, type = "error")
  
 	## Download Error report
 	output$downloadprecleaned <- downloadHandler(
@@ -171,12 +185,12 @@ mod_error_report_server <- function(input, output, session, AppReactiveValue) {
 	    paste("Error Report", ".xlsx", sep = "")
 	  },
 	  content = function(file) {
-	    writexl::write_xlsx(Error_Download(), file)
+	    writexl::write_xlsx(AppReactiveValue$result[["ErrorReportclean"]], file)
 	  }
 	)
 	
 	output$Preview_Error_Report <-  DT::renderDataTable(
-	  expr = as.data.frame( Error_Download),
+	  expr = as.data.frame( AppReactiveValue$result[["ErrorReportclean"]]),
   	#extensions = c("Buttons"),
   	options = list(
   	  dom = 'lfrtip',

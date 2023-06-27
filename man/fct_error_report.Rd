@@ -21,13 +21,55 @@ result list with results and data error...
 \description{
 The functions perform systematic Data Quality Check
 }
+\details{
+Currently this includes the 19 following Check: 
+
+ __Completeness__:
+
+ 1.  missingcountry: Country information missing
+ 2. countryadmincheck: Administrative unit level1 not matching 
+ 3.  admin1and2check: Administrative unit level2 not matching 
+ 4.  miss_appeal_org: Missing appealing organsation
+ 5.  miss_setup:   Missing Implementation
+ 6.  miss_implementing_org:   Missing name of implementer
+ 7.  miss_month: Missing month
+ 8.  missing_what,
+  
+ __Consistency__:
+ 9.  wrongsectindicator, 
+ 10.  zeroCVA, 
+ 11.  missingmechanism, 
+ 12.  CVANotoYes,         
+ 13.  MultipurposeSector, 
+ 14.  DirectAssistanceNoBenef, 
+ 15.  NewBenefvstotal, 
+ 
+ __Accuracy__:
+ 16.  PopTypeBreakdown, 
+ 17.  AGDBreakdown, 
+ 18.  CBuildingNoBenef, 
+ 19.  NoOutput
+}
 \examples{
 ## Get data
-result <- fct_read_data()
+result0 <- fct_read_data()
 ## Fix errors
-result <- fct_error_report(result)
-## Display fixed data 
+result <- fct_error_report(result = result0,
+                             countryname = NULL)
+ 
+## Use parameters
+result <- fct_error_report(result = result0,
+                           countryname ="All")
+## charts 
+print(result$plot_Country)
+result <- fct_error_report(result = result0,
+                           countryname ="Colombia")
 
+print(result$plot_Appealing)
+## Error
+head(result[["Error"]], 10)
+## Display fixed data 
 head(result[["ErrorReportclean"]], 10)
+
 
 }

@@ -69,7 +69,7 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="automated-data-quality-control--aggregation-from-activityinfo">AUTOMATED DATA QUALITY CONTROL &amp; AGGREGATION FROM ACTIVITYINFO<a class="anchor" aria-label="anchor" href="#automated-data-quality-control--aggregation-from-activityinfo"></a>
+<div class="page-header"><h1 id="data-quality-control--aggregation-from-activityinfo">Data Quality Control &amp; Aggregation from ActivityInfo<a class="anchor" aria-label="anchor" href="#data-quality-control--aggregation-from-activityinfo"></a>
 </h1></div>
 <div class="section level2">
 <h2 id="objectives">Objectives<a class="anchor" aria-label="anchor" href="#objectives"></a>
@@ -79,10 +79,10 @@
 <p>Be able to flag the errors and apply automatic corrections or manual revisions, as desired by the data owner</p>
 <p>This package enable a scripted process so that:</p>
 <ul>
-<li>Check are consistent with Activity Info</li>
-<li>Different scenario of aggregation models can be evaluated</li>
-<li>Time and energy are saved</li>
-<li>Reproducibility is enforced</li>
+<li><p>Check are consistent with Activity Info</p></li>
+<li><p>Different scenario of aggregation models can be evaluated</p></li>
+<li><p>Time and energy are saved</p></li>
+<li><p>Reproducibility is enforced</p></li>
 </ul>
 <p>The package was built from <a href="https://edouard-legoupil.github.io/graveler/" class="external-link">{graveler}</a>.</p>
 <p>The consolidated report generation will only be working if the data is clean: errors in breakdowns in the activities will be in the consolidated report</p>
@@ -109,9 +109,12 @@
 <div class="section level3">
 <h3 id="quality-check">Quality Check<a class="anchor" aria-label="anchor" href="#quality-check"></a>
 </h3>
-<p>A total of 20 errors are checked by the Data Quality check report. They can be divided in 3 categories: Missing values in mandatory fields i.e.: No Implementing partners</p>
-<p>Inconsistencies: Country and Admin1 not matching, Activities with transferred values registered but CVA = “No”</p>
-<p>Incorrect or empty breakdown information</p>
+<p>A series of errors are checked by the Data Quality check report. They can be divided in 3 categories:</p>
+<ul>
+<li><p><strong>Completeness</strong>: For instance, Missing values in mandatory fields i.e.: No Implementing partners</p></li>
+<li><p><strong>Consistency</strong>: Country and Admin1 not matching, Activities with transferred values registered but CVA = “No”</p></li>
+<li><p><strong>Accuracy</strong>: Incorrect or empty breakdown information</p></li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="automatic-cleaning">Automatic Cleaning<a class="anchor" aria-label="anchor" href="#automatic-cleaning"></a>

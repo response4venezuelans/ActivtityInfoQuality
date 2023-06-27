@@ -261,37 +261,54 @@
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Get data</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_read_data.html">fct_read_data</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">result0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_read_data.html">fct_read_data</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">## Fix errors</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_error_report.html">fct_error_report</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">## Display fixed data </span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_error_report.html">fct_error_report</a></span><span class="op">(</span>result <span class="op">=</span> <span class="va">result0</span>,</span>
+<span>                             countryname <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span> </span>
+<span><span class="co">## Use parameters</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_error_report.html">fct_error_report</a></span><span class="op">(</span>result <span class="op">=</span> <span class="va">result0</span>,</span>
+<span>                           countryname <span class="op">=</span><span class="st">"All"</span><span class="op">)</span></span>
+<span><span class="co">## charts </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">plot_Country</span><span class="op">)</span></span></code></pre></div>
+<p><img src="development_files/figure-html/example-fct_error_report-1.png" width="700"></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_error_report.html">fct_error_report</a></span><span class="op">(</span>result <span class="op">=</span> <span class="va">result0</span>,</span>
+<span>                           countryname <span class="op">=</span><span class="st">"Colombia"</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">plot_Appealing</span><span class="op">)</span></span></code></pre></div>
+<p><img src="development_files/figure-html/example-fct_error_report-2.png" width="700"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Error</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span><span class="op">[[</span><span class="st">"Error"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">## Display fixed data </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span><span class="op">[[</span><span class="st">"ErrorReportclean"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 40</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 45</span></span></span>
 <span><span class="co">#&gt;    Country Admin1 Admin2 Appealing_org Implementation Implementing_partner Month</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Mexico  Coahu… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Mexico  Baja … <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Mexico  Nuevo… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Mexico  Ciuda… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Mexico  Chiap… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Mexico  Tabas… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Mexico  Aguas… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Mexico  Baja … <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Mexico  Ciuda… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Mexico  Estad… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 33 more variables: Subsector &lt;chr&gt;, Indicator &lt;chr&gt;, Activity_Name &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Colomb… Santa… Bucar… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Colomb… Atlán… Barra… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Colomb… Atlán… Barra… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Colomb… Atlán… Barra… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Colomb… Atlán… Barra… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Colomb… Atlán… Barra… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Colomb… Santa… Bucar… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Colomb… Norte… San J… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Colomb… Norte… Villa… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Colomb… Norte… San J… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 38 more variables: Subsector &lt;chr&gt;, Indicator &lt;chr&gt;, Activity_Name &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Activity_Description &lt;chr&gt;, RMRPActivity &lt;chr&gt;, CVA &lt;chr&gt;, Value &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Delivery_mechanism &lt;chr&gt;, Quantity_output &lt;dbl&gt;, Total_monthly &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   New_beneficiaries &lt;dbl&gt;, IN_DESTINATION &lt;dbl&gt;, IN_TRANSIT &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Host_Communities &lt;dbl&gt;, PENDULARS &lt;dbl&gt;, Returnees &lt;dbl&gt;, Girls &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Boys &lt;dbl&gt;, Women &lt;dbl&gt;, Men &lt;dbl&gt;, Other_under &lt;dbl&gt;, Other_above &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   admin1and2check &lt;chr&gt;, missing_what &lt;chr&gt;, zeroCVA &lt;chr&gt;, …</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;">#   countryadmin1 &lt;chr&gt;, Admin1and2 &lt;chr&gt;, sectorindicator &lt;chr&gt;, …</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="fct_aggregate_data">fct_aggregate_data<a class="anchor" aria-label="anchor" href="#fct_aggregate_data"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_read_data.html">fct_read_data</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">## Fix errors</span></span>
@@ -302,8 +319,8 @@
 <span><span class="co">### Combination 1</span></span>
 <span><span class="va">resultpinsum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_aggregate_data.html">fct_aggregate_data</a></span><span class="op">(</span>result <span class="op">=</span> <span class="va">result2</span>,</span>
 <span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>, <span class="co"># r "target"  </span></span>
-<span>                             totalmodel <span class="op">=</span> <span class="st">"sum"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span>
+<span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>,  </span>
+<span>                             totalmodel <span class="op">=</span> <span class="st">"sum"</span>   </span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resultpinsum</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span>
@@ -331,8 +348,8 @@
 <span><span class="co">### Combination 2</span></span>
 <span><span class="va">resulttargetsum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_aggregate_data.html">fct_aggregate_data</a></span><span class="op">(</span><span class="va">result2</span>,</span>
 <span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>                             proportions <span class="op">=</span> <span class="st">"target"</span>, <span class="co"># r "target"  </span></span>
-<span>                             totalmodel <span class="op">=</span> <span class="st">"sum"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span>
+<span>                             proportions <span class="op">=</span> <span class="st">"target"</span>,  </span>
+<span>                             totalmodel <span class="op">=</span> <span class="st">"sum"</span>   </span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resulttargetsum</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span>
@@ -361,8 +378,8 @@
 <span><span class="co">### Combination 3</span></span>
 <span><span class="va">resultpinmaxsector</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_aggregate_data.html">fct_aggregate_data</a></span><span class="op">(</span><span class="va">result2</span>,</span>
 <span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>, <span class="co"># r "target"  </span></span>
-<span>                             totalmodel <span class="op">=</span> <span class="st">"maxsector"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span>
+<span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>,  </span>
+<span>                             totalmodel <span class="op">=</span> <span class="st">"maxsector"</span>   </span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resultpinmaxsector</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span>
@@ -391,8 +408,8 @@
 <span><span class="co">### Combination 4</span></span>
 <span><span class="va">resulttargetmaxsector</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_aggregate_data.html">fct_aggregate_data</a></span><span class="op">(</span><span class="va">result2</span>,</span>
 <span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>                             proportions <span class="op">=</span> <span class="st">"target"</span>, <span class="co"># r "target"  </span></span>
-<span>                             totalmodel <span class="op">=</span> <span class="st">"maxsector"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span>
+<span>                             proportions <span class="op">=</span> <span class="st">"target"</span>,  </span>
+<span>                             totalmodel <span class="op">=</span> <span class="st">"maxsector"</span>   </span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resulttargetmaxsector</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span>
@@ -421,8 +438,8 @@
 <span><span class="co">### Combination 5</span></span>
 <span><span class="va">resultpinsouthernconemodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_aggregate_data.html">fct_aggregate_data</a></span><span class="op">(</span><span class="va">result2</span>,</span>
 <span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>, <span class="co"># r "target"  </span></span>
-<span>                             totalmodel <span class="op">=</span> <span class="st">"southernconemodel"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span>
+<span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>,  </span>
+<span>                             totalmodel <span class="op">=</span> <span class="st">"southernconemodel"</span>   </span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resultpinsouthernconemodel</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span>
@@ -451,8 +468,8 @@
 <span><span class="co">### Combination 6</span></span>
 <span><span class="va">resulttargetsouthernconemodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fct_aggregate_data.html">fct_aggregate_data</a></span><span class="op">(</span><span class="va">result2</span>,</span>
 <span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span>
-<span>                             proportions <span class="op">=</span> <span class="st">"target"</span>, <span class="co"># r "target"  </span></span>
-<span>                             totalmodel <span class="op">=</span> <span class="st">"southernconemodel"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span>
+<span>                             proportions <span class="op">=</span> <span class="st">"target"</span>, </span>
+<span>                             totalmodel <span class="op">=</span> <span class="st">"southernconemodel"</span>   </span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resulttargetsouthernconemodel</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span>

@@ -45,9 +45,7 @@
 #' head(result[["dfadmin2"]], 10)
 #' head(result[["dfindicator"]], 10)
 #' head(result[["dfpartner"]], 10)
-fct_read_data <- function( form){
-  
-  
+fct_read_data <- function( ){
 
   activityinfo::activityInfoToken(Sys.getenv("ACTIVITYINFOTOKEN"),
                                 prompt = FALSE)

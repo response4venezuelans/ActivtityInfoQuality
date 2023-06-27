@@ -4,13 +4,43 @@
 #' 
 #' The functions perform systematic Data Quality Check 
 #' 
+#' Currently this includes the 19 following Check: 
+#' 
+#'  __Completeness__:
+#' 
+#'  1.  missingcountry: Country information missing
+#'  2. countryadmincheck: Administrative unit level1 not matching 
+#'  3.  admin1and2check: Administrative unit level2 not matching 
+#'  4.  miss_appeal_org: Missing appealing organsation
+#'  5.  miss_setup:   Missing Implementation
+#'  6.  miss_implementing_org:   Missing name of implementer
+#'  7.  miss_month: Missing month
+#'  8.  missing_what,
+#'   
+#'  __Consistency__:
+#'  9.  wrongsectindicator, 
+#'  10.  zeroCVA, 
+#'  11.  missingmechanism, 
+#'  12.  CVANotoYes,         
+#'  13.  MultipurposeSector, 
+#'  14.  DirectAssistanceNoBenef, 
+#'  15.  NewBenefvstotal, 
+#'  
+#'  __Accuracy__:
+#'  16.  PopTypeBreakdown, 
+#'  17.  AGDBreakdown, 
+#'  18.  CBuildingNoBenef, 
+#'  19.  NoOutput
+#' 
 #' @param result output of the previous function fct_read_data()
 #' @param countryname  name of the country to filter the report
 #'                     can be set to "All" - or any of  "Aruba", "Curaçao",
 #'                      "Costa Rica", "Dominican Republic",
 #'                      "Trinidad and Tobago", "Guyana", 
 #'                                   "Mexico", "Panama"
-#'  
+#' @import ggplot2 
+#' @importFrom scales label_number cut_short_scale
+#' @importFrom unhcrthemes theme_unhcr
 #' @importFrom dplyr arrange mutate  left_join select ungroup 
 #'                    rowwise row_number
 #'                    
@@ -21,12 +51,25 @@
 #' @export
 #' @examples
 #' ## Get data
-#' result <- fct_read_data()
+#' result0 <- fct_read_data()
 #' ## Fix errors
-#' result <- fct_error_report(result)
-#' ## Display fixed data 
+#' result <- fct_error_report(result = result0,
+#'                              countryname = NULL)
+#'  
+#' ## Use parameters
+#' result <- fct_error_report(result = result0,
+#'                            countryname ="All")
+#' ## charts 
+#' print(result$plot_Country)
+#' result <- fct_error_report(result = result0,
+#'                            countryname ="Colombia")
 #' 
+#' print(result$plot_Appealing)
+#' ## Error
+#' head(result[["Error"]], 10)
+#' ## Display fixed data 
 #' head(result[["ErrorReportclean"]], 10)
+#' 
 #' 
 fct_error_report <- function(result,
                              countryname = NULL){
@@ -38,23 +81,6 @@ fct_error_report <- function(result,
   dfindicator <- result[["dfindicator"]]
   dfpartner<- result[["dfpartner"]] 
   
-  ### Filter the country if needed
-    
-    if (is.null(countryname) || (countryname=="All")) {
-      df5Werror <- df5W   
-    } else {
-      df5Werror <- df5W  |> filter(Country == countryname)    
-    }
-
-  # check if cascading values are matching, concatenate relevent columns
-  df5Werror <- df5Werror  |>
-    dplyr::mutate(countryadmin1 = paste(Country, Admin1),
-           Admin1and2 = paste(Admin1, Admin2),
-           sectorindicator = paste(Subsector, Indicator)) |>
-    dplyr::left_join(dfindicator, by = c("Subsector", "Indicator")) |>
-    dplyr::select(-CODE, -sectindic)
-    
-  
   # Data wrangling of reference table for quality check
   # Vectors for verification
   partnerlist <- unique(as.vector(dfpartner["Name"]))
@@ -62,143 +88,179 @@ fct_error_report <- function(result,
   admin2list <- unique(as.vector(dfadmin2["admin1and2"]))
   sectindiclist <-  as.vector(dfindicator["sectindic"])
   
-  # Data Quality Check
+  ### Filter the country if needed
+  if (is.null(countryname) || (countryname=="All")) {
+      df5Werror <- df5W   
+    } else {
+      df5Werror <- df5W  |> 
+        dplyr::filter(Country == countryname)    
+    }
+
+  # concatenate relevant columns to then check if cascading values are matching, 
+  df5Werror <- df5Werror  |>
+    dplyr::mutate(
+      countryadmin1 = paste(Country, Admin1),
+      Admin1and2 = paste(Admin1, Admin2),
+      sectorindicator = paste(Subsector, Indicator)) |>
+    dplyr::left_join(dfindicator, by = c("Subsector", "Indicator")) |>
+    dplyr::select(-CODE, -sectindic)
+    
+  # Data Quality Check #############
   df5Werror <- df5Werror  |>
     dplyr::rowwise() |>
-    # Where: check missing mandatory fields, Country-Admin1 pairs and Admin1-Admin2 pairs
-    dplyr::mutate(missingcountry = ifelse(is.na(Country) | is.na(Admin1), "Review", ""),
-           countryadmincheck = ifelse(!any(countryadmin1 == countrylist[[1]]), "Review", ""),
-           admin1and2check = ifelse(!is.na(Admin2) & !any(Admin1and2 == admin2list[[1]]), "Review", ""),
+    # Where: check missing mandatory fields, 
+    # Country-Admin1 pairs and Admin1-Admin2 pairs
+    dplyr::mutate(
+      missingcountry = ifelse(is.na(Country) | is.na(Admin1), 1,  NA),
+      countryadmincheck = ifelse(!any(countryadmin1 == countrylist[[1]]), 1,  NA),
+      admin1and2check = ifelse(!is.na(Admin2) & !any(Admin1and2 == admin2list[[1]]), 1,  NA),
     # Who: Missing values and Org names that are not part of the list
-      miss_appeal_org = ifelse(!is.na(Appealing_org) & any(Appealing_org == partnerlist[[1]]), "", "Review"),
-      miss_setup = ifelse(is.na(Implementation), "Review", ""),
+      miss_appeal_org = ifelse(!is.na(Appealing_org) & any(Appealing_org == partnerlist[[1]]),  NA, 1),
+      miss_setup = ifelse(is.na(Implementation), 1,  NA),
       miss_implementing_org = ifelse((Implementation == "Yes" & 
                                         (is.na(Implementing_partner) | !any(Implementing_partner == partnerlist[[1]]))) | 
-                                       (Implementation == "No" & !is.na(Implementing_partner)), "Review", ""),
-    # When: Missing month
-    miss_month = ifelse(is.na(Month), "Review", ""),
-    # What: missing values and inconsistencies in CVA
-    missing_what = ifelse(is.na(Subsector)|is.na(Indicator)|is.na(Activity_Name)| is.na(RMRPActivity)|is.na(CVA), "Review", ""),
-    wrongsectindicator = ifelse(!any(sectorindicator == sectindiclist[[1]]), "Review", ""),
-    # CVA mistakes
-    zeroCVA = ifelse(CVA == "Yes" & (is.na(Value)|  Value == 0), "Review", ""),
-    missingmechanism = ifelse(CVA == "Yes" & is.na(Delivery_mechanism), "Review", ""),
-    CVANotoYes = ifelse((!is.na(Delivery_mechanism) | (!is.na(Value) & Value > 0)) & CVA == "No", "Review", ""),
-    MultipurposeSector = ifelse(Subsector == "Multipurpose Cash Assistance (MPC)" & CVA == "No", "Review", ""),
-    # Output and Breakdown related mistakes. Reviews will be divided according to indicator types
-    # PNiN indicator related mistakes
-    DirectAssistanceNoBenef = ifelse(IndicatorType == 'Direct Assistance' &
-                                       ((is.na(New_beneficiaries) | New_beneficiaries == 0) &
-                                          (is.na(Total_monthly) | Total_monthly == 0)), "Review", ""),
-    NewBenefvstotal = ifelse(IndicatorType == 'Direct Assistance' & New_beneficiaries > Total_monthly, "Review", ""),
-    PopTypeBreakdown = ifelse(IndicatorType == 'Direct Assistance' & New_beneficiaries != sum(IN_DESTINATION,
-                                                                                 IN_TRANSIT,
-                                                                                 Host_Communities,
-                                                                                 PENDULARS,
-                                                                                 Returnees, na.rm = TRUE), "Review", ""),
-    AGDBreakdown = ifelse(IndicatorType == 'Direct Assistance' & New_beneficiaries != sum(Girls,
-                                                                              Boys,
-                                                                              Women,
-                                                                              Men,
-                                                                            Other_under,
-                                                                              Other_above, na.rm = TRUE), "Review", ""),
-    # Capacity Building indicators
-    CBuildingNoBenef = ifelse(IndicatorType == 'Capacity Building' &
-                                (Total_monthly == 0 | is.na(Total_monthly)), "Review", ""),
-    # Todos los otros indicadores
-    NoOutput = ifelse ((IndicatorType != 'Capacity Building' &
-                          IndicatorType != 'Direct Assistance') & 
-                         (Quantity_output == 0 | is.na(Quantity_output)), "Review", ""),
-    Review = NA) |>
-    dplyr::ungroup() |>
-    dplyr::select(-countryadmin1, -Admin1and2, -sectorindicator, -IndicatorType)
-  # Count errors and classify
+                                       (Implementation == "No" & !is.na(Implementing_partner)), 1,  NA),
+      # When: Missing month
+      miss_month = ifelse(is.na(Month), 1,  NA),
+      # What: missing values and inconsistencies in CVA
+      missing_what = ifelse(is.na(Subsector)|is.na(Indicator)|is.na(Activity_Name)| is.na(RMRPActivity)|is.na(CVA), 1,  NA),
+      wrongsectindicator = ifelse(!any(sectorindicator == sectindiclist[[1]]), 1,  NA),
+      # CVA mistakes
+      zeroCVA = ifelse(CVA == "Yes" & (is.na(Value)|  Value == 0), 1,  NA),
+      missingmechanism = ifelse(CVA == "Yes" & is.na(Delivery_mechanism), 1,  NA),
+      CVANotoYes = ifelse((!is.na(Delivery_mechanism) | (!is.na(Value) & Value > 0)) & CVA == "No", 1,  NA),
+      MultipurposeSector = ifelse(Subsector == "Multipurpose Cash Assistance (MPC)" & CVA == "No", 1,  NA),
+      # Output and Breakdown related mistakes. Reviews will be divided according to indicator types
+      # PNiN indicator related mistakes
+      DirectAssistanceNoBenef = ifelse(IndicatorType == 'Direct Assistance' &
+                                         ((is.na(New_beneficiaries) | New_beneficiaries == 0) &
+                                            (is.na(Total_monthly) | Total_monthly == 0)), 1,  NA),
+      NewBenefvstotal = ifelse(IndicatorType == 'Direct Assistance' & New_beneficiaries > Total_monthly, 1,  NA),
+      PopTypeBreakdown = ifelse(IndicatorType == 'Direct Assistance' & New_beneficiaries != sum(IN_DESTINATION,
+                                                                                   IN_TRANSIT,
+                                                                                   Host_Communities,
+                                                                                   PENDULARS,
+                                                                                   Returnees, na.rm = TRUE), 1,  NA),
+      AGDBreakdown = ifelse(IndicatorType == 'Direct Assistance' & New_beneficiaries != sum(Girls,
+                                                                                Boys,
+                                                                                Women,
+                                                                                Men,
+                                                                              Other_under,
+                                                                                Other_above, na.rm = TRUE), 1,  NA),
+      # Capacity Building indicators
+      CBuildingNoBenef = ifelse(IndicatorType == 'Capacity Building' &
+                                  (Total_monthly == 0 | is.na(Total_monthly)),
+                                1,  NA),
+      # Todos los otros indicadores
+      NoOutput = ifelse ((IndicatorType != 'Capacity Building' &
+                            IndicatorType != 'Direct Assistance') & 
+                           (Quantity_output == 0 | is.na(Quantity_output)), 
+                         1,  NA)   ) |>
+    ## Compile all errors 
+    dplyr::mutate( QA = sum( 
+      c( missingcountry, countryadmincheck, admin1and2check, miss_appeal_org,
+         miss_setup, miss_implementing_org, miss_month, missing_what, 
+         wrongsectindicator, zeroCVA, missingmechanism, CVANotoYes,
+         MultipurposeSector, DirectAssistanceNoBenef, NewBenefvstotal, 
+         PopTypeBreakdown, AGDBreakdown, CBuildingNoBenef, NoOutput) , 
+      na.rm = TRUE) ,
+       Review = ifelse (QA > 0, "Please review activity", "OK") ,
+       Review2 = ifelse (QA > 0, 1, NA) ) |>
+    
+    dplyr::ungroup() |> 
+    ## Remove empty column
+    purrr::discard(~all(is.na(.) | . ==""))
   
-  df5Werror$Review[apply(df5Werror, 1, function(r) any(r %in% c("Review"))) == TRUE] <- "Please review activity"
+   # table( df5Werror$QA, useNA = "ifany")
+   # table( df5Werror$Review, useNA = "ifany")
+   #table( df5Werror$Review2, useNA = "ifany")
+   ## Add to result
+   result$ErrorReportclean <- df5Werror
+ 
+  ## Add summary plot 
+   
+   
+  # df5Werror |> 
+  #   dplyr::select(Appealing_org, Review ) |>
+  #   dply::group_by(Appealing_org) |>
+  #   dplyr::summarise(Review = dplyr:: )
+  # pivot_longer(cols = -Year) |>
+  # ggplot() +
+  # geom_col(aes(x = Year, y = value, fill = name),
+  #          width = 0.7,
+  #          position = position_fill()) +
+  # unhcrthemes::scale_fill_unhcr_d(palette = "pal_unhcr") +
+  # scale_y_continuous(expand = expansion(c(0, 0.01)),
+  #                    labels = percent) +
+  # labs(title = "Levels of earmarking | 2012-2020",
+  #      caption = paste0( "Source:R4V | Data as of ",format(Sys.Date(),  '%d %B %Y'))   ) +
+  # unhcrthemes::theme_unhcr(font_size = 14,
+  #             grid = "Y",
+  #             axis = "x",
+  #             axis_title = FALSE)
+   
+   
+  plot_Appealing <- df5Werror |>
+        dplyr::select(Appealing_org, Review2 ) |>
+        dplyr::group_by(Appealing_org) |>
+        dplyr::summarise(Review2 = sum(Review2, na.rm = TRUE) ) |>
+       dplyr::filter(Review2  >0 )|>
+	      #filter(!is.na(Review)) |>
+	      ggplot() +
+	      aes(x = reorder(Appealing_org, Review2),
+	          y = Review2) +
+	      geom_col(fill = "#0c4c8a" ) +
+       # scale_y_continuous(expand = expansion(c(0, 0.1)),
+       #               labels = scales::label_number(scale_cut = scales::cut_short_scale())) +
+	      coord_flip()  +
+        labs(
+            title =  "Number of Activity to review by Appealing Org.",
+            subtitle = "Data Quality Review",
+            x = "",
+            y = "",
+            caption = paste0( "Source:R4V | Data as of ",format(Sys.Date(),  '%d %B %Y'))    ) +
+        unhcrthemes::theme_unhcr(font_size = 14,
+                      grid = "X",
+                      rel_small = 6/9#,
+                     # axis = "y",
+                      #axis_title = TRUE,
+                     # legend = FALSE,
+                     # axis_text = "y"
+                    )
   
-  # Remove empty errors column for easier reading
-  # Create a row number column 
+   result$plot_Appealing <- plot_Appealing
   
-  df5Werror <- df5Werror |>
-    dplyr::mutate(id =  dplyr::row_number())
+   ## Second plot 
+  plot_Country <-  df5Werror |>
+        dplyr::select(Country, Review2 ) |>
+        dplyr::group_by(Country) |>
+        dplyr::summarise(Review2 = sum(Review2, na.rm = TRUE) ) |>
+       dplyr::filter(Review2  >0 )|>
+	      ggplot() +
+	      aes(x =  reorder(Country, Review2) , 
+	          y = Review2) +
+	      geom_col(fill = "#0c4c8a") +
+       # scale_y_continuous(expand = expansion(c(0, 0.1)),
+       #               labels = scales::label_number(scale_cut = scales::cut_short_scale())) +
+	      coord_flip()  +
+        labs(
+            title =  "Number of Activity to review by Country",
+            subtitle = "Data Quality Review",
+            x = "",
+            y = "",
+            caption = paste0( "Source: R4V | Data as of ",
+             format(Sys.Date(),  '%d %B %Y'))    ) +
+        unhcrthemes::theme_unhcr(font_size = 14,
+                      grid = "X",
+                      rel_small = 6/9#,
+                     # axis = "y",
+                      #axis_title = TRUE,
+                     # legend = FALSE,
+                     # axis_text = "y"
+                    )
+  
+  result$plot_Country <- plot_Country
 
-  # split the dataframe in 2
-  df5Werror1 <- df5Werror |>
-    dplyr::select(Country,
-           Admin1,
-           Admin2,
-           Appealing_org,
-           Implementation,
-           Implementing_partner,
-           Month,
-           Subsector,
-           Indicator,
-           Activity_Name,
-           Activity_Description,
-           RMRPActivity,
-           CVA,
-           Value,
-           Delivery_mechanism,
-           Quantity_output,
-           Total_monthly, 
-           New_beneficiaries,
-           IN_DESTINATION,
-           IN_TRANSIT,
-           Host_Communities,
-           PENDULARS,
-           Returnees,  
-           Girls,
-           Boys,
-           Women,
-           Men,
-           Other_under,
-           Other_above,
-           id)
-
-   df5Werror2 <- df5Werror |>
-     dplyr::select(missingcountry,
-            countryadmincheck,
-            admin1and2check,
-            miss_appeal_org,
-            miss_setup,
-            miss_implementing_org,
-            miss_month,
-            missing_what,
-            wrongsectindicator,
-            zeroCVA,
-            missingmechanism,
-            CVANotoYes,           
-             MultipurposeSector,
-             DirectAssistanceNoBenef,
-             NewBenefvstotal,
-             PopTypeBreakdown,
-             AGDBreakdown,
-             CBuildingNoBenef,     
-             NoOutput,
-             Review,
-             id)
-  
-  # remove empty columns
-  df5Werror2 <-  df5Werror2 |> 
-                 purrr::discard(~all(is.na(.) | . ==""))
- 
-  # join by matching id column
- 
- df5Werror0 <- df5Werror1 |>
-   dplyr::left_join(df5Werror2, by = "id") |>
-   dplyr::select(-id)
- 
-  # print error file
-  # if(write == "yes"){
-  # writexl::write_xlsx(df5Werror0, './out/5WErrorReport.xlsx')
-  # } else {
-  #   
-  # }
-  
- result$ErrorReportclean <- df5Werror0
- 
- # return_data$ErrorReportclean <- df5Werror0
- # return(return_data)
- return(result)
+  return(result)
     
 }

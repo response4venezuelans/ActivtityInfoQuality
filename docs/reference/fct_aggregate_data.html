@@ -116,8 +116,8 @@ within the spreadsheet inst/Proportions.xlsx</p></dd>
 <span class="r-in"><span><span class="co">### Combination 1</span></span></span>
 <span class="r-in"><span><span class="va">resultpinsum</span> <span class="op">&lt;-</span> <span class="fu">fct_aggregate_data</span><span class="op">(</span>result <span class="op">=</span> <span class="va">result2</span>,</span></span>
 <span class="r-in"><span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span></span>
-<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>, <span class="co"># r "target"  </span></span></span>
-<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"sum"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span></span>
+<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>,  </span></span>
+<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"sum"</span>   </span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resultpinsum</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span></span>
@@ -145,8 +145,8 @@ within the spreadsheet inst/Proportions.xlsx</p></dd>
 <span class="r-in"><span><span class="co">### Combination 2</span></span></span>
 <span class="r-in"><span><span class="va">resulttargetsum</span> <span class="op">&lt;-</span> <span class="fu">fct_aggregate_data</span><span class="op">(</span><span class="va">result2</span>,</span></span>
 <span class="r-in"><span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span></span>
-<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"target"</span>, <span class="co"># r "target"  </span></span></span>
-<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"sum"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span></span>
+<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"target"</span>,  </span></span>
+<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"sum"</span>   </span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resulttargetsum</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span></span>
@@ -175,8 +175,8 @@ within the spreadsheet inst/Proportions.xlsx</p></dd>
 <span class="r-in"><span><span class="co">### Combination 3</span></span></span>
 <span class="r-in"><span><span class="va">resultpinmaxsector</span> <span class="op">&lt;-</span> <span class="fu">fct_aggregate_data</span><span class="op">(</span><span class="va">result2</span>,</span></span>
 <span class="r-in"><span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span></span>
-<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>, <span class="co"># r "target"  </span></span></span>
-<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"maxsector"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span></span>
+<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>,  </span></span>
+<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"maxsector"</span>   </span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resultpinmaxsector</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span></span>
@@ -205,8 +205,8 @@ within the spreadsheet inst/Proportions.xlsx</p></dd>
 <span class="r-in"><span><span class="co">### Combination 4</span></span></span>
 <span class="r-in"><span><span class="va">resulttargetmaxsector</span><span class="op">&lt;-</span> <span class="fu">fct_aggregate_data</span><span class="op">(</span><span class="va">result2</span>,</span></span>
 <span class="r-in"><span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span></span>
-<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"target"</span>, <span class="co"># r "target"  </span></span></span>
-<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"maxsector"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span></span>
+<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"target"</span>,  </span></span>
+<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"maxsector"</span>   </span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resulttargetmaxsector</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span></span>
@@ -235,8 +235,8 @@ within the spreadsheet inst/Proportions.xlsx</p></dd>
 <span class="r-in"><span><span class="co">### Combination 5</span></span></span>
 <span class="r-in"><span><span class="va">resultpinsouthernconemodel</span> <span class="op">&lt;-</span> <span class="fu">fct_aggregate_data</span><span class="op">(</span><span class="va">result2</span>,</span></span>
 <span class="r-in"><span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span></span>
-<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>, <span class="co"># r "target"  </span></span></span>
-<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"southernconemodel"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span></span>
+<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"pin"</span>,  </span></span>
+<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"southernconemodel"</span>   </span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resultpinsouthernconemodel</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span></span>
@@ -265,8 +265,8 @@ within the spreadsheet inst/Proportions.xlsx</p></dd>
 <span class="r-in"><span><span class="co">### Combination 6</span></span></span>
 <span class="r-in"><span><span class="va">resulttargetsouthernconemodel</span> <span class="op">&lt;-</span> <span class="fu">fct_aggregate_data</span><span class="op">(</span><span class="va">result2</span>,</span></span>
 <span class="r-in"><span>                             countryname <span class="op">=</span> <span class="cn">NULL</span>, </span></span>
-<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"target"</span>, <span class="co"># r "target"  </span></span></span>
-<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"southernconemodel"</span>  <span class="co"># or  "maxsector"  or "southernconemodel" </span></span></span>
+<span class="r-in"><span>                             proportions <span class="op">=</span> <span class="st">"target"</span>, </span></span>
+<span class="r-in"><span>                             totalmodel <span class="op">=</span> <span class="st">"southernconemodel"</span>   </span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">resulttargetsouthernconemodel</span><span class="op">[[</span><span class="st">"ConsolidatedReport"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span></span>

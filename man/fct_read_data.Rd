@@ -4,7 +4,7 @@
 \alias{fct_read_data}
 \title{fct_read_data}
 \usage{
-fct_read_data(form)
+fct_read_data()
 }
 \value{
 list with the content of the activity info DB 

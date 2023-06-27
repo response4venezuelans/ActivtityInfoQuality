@@ -1,3 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^ActivtityInfoQuality\.Rproj$
+^LICENSE\.md$
+^README\.Rmd$
+^_pkgdown\.yml$
+^docs$
+^dev$
+^rsconnect$
+^ActivtityInfoQuality2\.Rproj$

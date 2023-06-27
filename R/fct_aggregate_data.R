@@ -52,8 +52,8 @@
 #' ### Combination 1
 #' resultpinsum <- fct_aggregate_data(result = result2,
 #'                              countryname = NULL, 
-#'                              proportions = "pin", # r "target"  
-#'                              totalmodel = "sum"  # or  "maxsector"  or "southernconemodel" 
+#'                              proportions = "pin",  
+#'                              totalmodel = "sum"   
 #' )
 #' 
 #' head(resultpinsum[["ConsolidatedReport"]], 10)
@@ -61,8 +61,8 @@
 #' ### Combination 2
 #' resulttargetsum <- fct_aggregate_data(result2,
 #'                              countryname = NULL, 
-#'                              proportions = "target", # r "target"  
-#'                              totalmodel = "sum"  # or  "maxsector"  or "southernconemodel" 
+#'                              proportions = "target",  
+#'                              totalmodel = "sum"   
 #' )
 #' 
 #' head(resulttargetsum[["ConsolidatedReport"]], 10)
@@ -71,8 +71,8 @@
 #' ### Combination 3
 #' resultpinmaxsector <- fct_aggregate_data(result2,
 #'                              countryname = NULL, 
-#'                              proportions = "pin", # r "target"  
-#'                              totalmodel = "maxsector"  # or  "maxsector"  or "southernconemodel" 
+#'                              proportions = "pin",  
+#'                              totalmodel = "maxsector"   
 #' )
 #' 
 #' head(resultpinmaxsector[["ConsolidatedReport"]], 10)
@@ -81,8 +81,8 @@
 #' ### Combination 4
 #' resulttargetmaxsector<- fct_aggregate_data(result2,
 #'                              countryname = NULL, 
-#'                              proportions = "target", # r "target"  
-#'                              totalmodel = "maxsector"  # or  "maxsector"  or "southernconemodel" 
+#'                              proportions = "target",  
+#'                              totalmodel = "maxsector"   
 #' )
 #' 
 #' head(resulttargetmaxsector[["ConsolidatedReport"]], 10)
@@ -91,8 +91,8 @@
 #' ### Combination 5
 #' resultpinsouthernconemodel <- fct_aggregate_data(result2,
 #'                              countryname = NULL, 
-#'                              proportions = "pin", # r "target"  
-#'                              totalmodel = "southernconemodel"  # or  "maxsector"  or "southernconemodel" 
+#'                              proportions = "pin",  
+#'                              totalmodel = "southernconemodel"   
 #' )
 #' 
 #' head(resultpinsouthernconemodel[["ConsolidatedReport"]], 10)
@@ -101,8 +101,8 @@
 #' ### Combination 6
 #' resulttargetsouthernconemodel <- fct_aggregate_data(result2,
 #'                              countryname = NULL, 
-#'                              proportions = "target", # r "target"  
-#'                              totalmodel = "southernconemodel"  # or  "maxsector"  or "southernconemodel" 
+#'                              proportions = "target", 
+#'                              totalmodel = "southernconemodel"   
 #' )
 #' 
 #' head(resulttargetsouthernconemodel[["ConsolidatedReport"]], 10)
@@ -584,7 +584,7 @@ if (totalmodel == "maxsector")
      dplyr::full_join(finalmonthlytotal, by = c("Country", "Admin1", "Month", "Subsector"))
 
   # For countries with no admin1, filter out to only keep the "Country level" data
-  countrynoadmin1 <- c("Aruba", "Curaçao", "Costa Rica", "Dominican Republic",
+  countrynoadmin1 <- c("Aruba", "Cura\u00e7ao", "Costa Rica", "Dominican Republic",
                        "Trinidad and Tobago", "Guyana", 
                      "Mexico", "Panama")
 

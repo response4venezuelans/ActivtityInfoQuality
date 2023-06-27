@@ -77,36 +77,78 @@ can be set to "All" - or any of  "Aruba", "Curaçao",
 
 <p>result list with results and data error...</p>
     </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Currently this includes the 19 following Check:</p>
+<p>__Completeness__:</p>
+<p>1.  missingcountry: Country information missing
+ 2. countryadmincheck: Administrative unit level1 not matching 
+ 3.  admin1and2check: Administrative unit level2 not matching 
+ 4.  miss_appeal_org: Missing appealing organsation
+ 5.  miss_setup:   Missing Implementation
+ 6.  miss_implementing_org:   Missing name of implementer
+ 7.  miss_month: Missing month
+ 8.  missing_what,</p>  
+<p>__Consistency__:
+ 9.  wrongsectindicator, 
+ 10.  zeroCVA, 
+ 11.  missingmechanism, 
+ 12.  CVANotoYes,         
+ 13.  MultipurposeSector, 
+ 14.  DirectAssistanceNoBenef, 
+ 15.  NewBenefvstotal,</p> 
+<p>__Accuracy__:
+ 16.  PopTypeBreakdown, 
+ 17.  AGDBreakdown, 
+ 18.  CBuildingNoBenef, 
+ 19.  NoOutput</p>
+    </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Get data</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="fct_read_data.html">fct_read_data</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">result0</span> <span class="op">&lt;-</span> <span class="fu"><a href="fct_read_data.html">fct_read_data</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## Fix errors</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">fct_error_report</span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## Display fixed data </span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">fct_error_report</span><span class="op">(</span>result <span class="op">=</span> <span class="va">result0</span>,</span></span>
+<span class="r-in"><span>                             countryname <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span><span class="co">## Use parameters</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">fct_error_report</span><span class="op">(</span>result <span class="op">=</span> <span class="va">result0</span>,</span></span>
+<span class="r-in"><span>                           countryname <span class="op">=</span><span class="st">"All"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## charts </span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">plot_Country</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="fct_error_report-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">fct_error_report</span><span class="op">(</span>result <span class="op">=</span> <span class="va">result0</span>,</span></span>
+<span class="r-in"><span>                           countryname <span class="op">=</span><span class="st">"Colombia"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">plot_Appealing</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="fct_error_report-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co">## Error</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span><span class="op">[[</span><span class="st">"Error"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-in"><span><span class="co">## Display fixed data </span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span><span class="op">[[</span><span class="st">"ErrorReportclean"</span><span class="op">]</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 40</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 45</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Country Admin1 Admin2 Appealing_org Implementation Implementing_partner Month</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Mexico  Coahu… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Mexico  Baja … <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Mexico  Nuevo… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Mexico  Ciuda… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Mexico  Chiap… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Mexico  Tabas… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Mexico  Aguas… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Mexico  Baja … <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Mexico  Ciuda… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Mexico  Estad… <span style="color: #BB0000;">NA</span>     United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 33 more variables: Subsector &lt;chr&gt;, Indicator &lt;chr&gt;, Activity_Name &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Colomb… Santa… Bucar… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Colomb… Atlán… Barra… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Colomb… Atlán… Barra… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Colomb… Atlán… Barra… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Colomb… Atlán… Barra… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Colomb… Atlán… Barra… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Colomb… Santa… Bucar… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Colomb… Norte… San J… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Colomb… Norte… Villa… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Colomb… Norte… San J… United Natio… No             <span style="color: #BB0000;">NA</span>                   2023…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 38 more variables: Subsector &lt;chr&gt;, Indicator &lt;chr&gt;, Activity_Name &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Activity_Description &lt;chr&gt;, RMRPActivity &lt;chr&gt;, CVA &lt;chr&gt;, Value &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Delivery_mechanism &lt;chr&gt;, Quantity_output &lt;dbl&gt;, Total_monthly &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   New_beneficiaries &lt;dbl&gt;, IN_DESTINATION &lt;dbl&gt;, IN_TRANSIT &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Host_Communities &lt;dbl&gt;, PENDULARS &lt;dbl&gt;, Returnees &lt;dbl&gt;, Girls &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Boys &lt;dbl&gt;, Women &lt;dbl&gt;, Men &lt;dbl&gt;, Other_under &lt;dbl&gt;, Other_above &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   admin1and2check &lt;chr&gt;, missing_what &lt;chr&gt;, zeroCVA &lt;chr&gt;, …</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   countryadmin1 &lt;chr&gt;, Admin1and2 &lt;chr&gt;, sectorindicator &lt;chr&gt;, …</span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -1,4 +1,4 @@
-#  AUTOMATED DATA QUALITY CONTROL & AGGREGATION FROM ACTIVITYINFO
+#  Data Quality Control & Aggregation from ActivityInfo
 
 ## Objectives
 
@@ -10,9 +10,12 @@ Be able to flag the errors and apply automatic corrections or manual revisions, 
 
 This package enable a scripted process so that:
 
- * Check are consistent with Activity Info
- * Different scenario of aggregation models can be evaluated
- * Time and energy are saved
+ * Check are consistent with Activity Info  
+ 
+ * Different scenario of aggregation models can be evaluated 
+ 
+ * Time and energy are saved 
+ 
  * Reproducibility is enforced
  
  The package was built from [{graveler}](https://edouard-legoupil.github.io/graveler/).
@@ -45,12 +48,13 @@ Tailored analysis and products for each country, partners, sector….
 
 ### Quality Check 
 
-A total of 20 errors are checked by the Data Quality check report. They can be divided in 3 categories:
-Missing values in mandatory fields i.e.: No Implementing partners
+A series of errors are checked by the Data Quality check report. They can be divided in 3 categories:
 
-Inconsistencies: Country and Admin1 not matching, Activities with transferred values registered but CVA = “No”
+ * __Completeness__: For instance, Missing values in mandatory fields i.e.: No Implementing partners
 
-Incorrect or empty breakdown information
+ * __Consistency__: Country and Admin1 not matching, Activities with transferred values registered but CVA = “No”
+
+ * __Accuracy__: Incorrect or empty breakdown information
 
 
 ### Automatic Cleaning
