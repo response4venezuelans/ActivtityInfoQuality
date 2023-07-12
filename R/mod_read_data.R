@@ -31,7 +31,7 @@ mod_read_data_ui <- function(id) {
             #  or upload you regional ENG 5W import table 
             
             tabsetPanel(type = "tabs",
-                        tabPanel(title= "Option 1: Pull Data already submitted to ActivityInfo",
+                        tabPanel(title= "Option 1: Pull & Filter Data already submitted to ActivityInfo",
                                  br(),
                                  "The action below will take a bit of time to complete if you do not use filter.",
                                  br(),

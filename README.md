@@ -2,13 +2,13 @@
 
 ## Objectives
 
-Control the quality of the data to avoid erroneous values, blanks…
+ 1. Control the quality of the data to avoid erroneous values, blanks…
 
-Although Activity Info permit to put restrictions and validation rules, some of those can be overwritten, especially when doing bulk import of data, which is the most convenient form of importing data in Activity Info
+ 2. Although Activity Info permit to put restrictions and validation rules, some of those can be overwritten, especially when doing bulk import of data, which is the most convenient form of importing data in Activity Info
 
-Be able to flag the errors and apply automatic corrections or manual revisions, as desired by the data owner
+ 3. Be able to flag the errors and apply automatic corrections or manual revisions, as desired by the data owner
 
-This package enable a scripted process so that:
+This package is the back office for a shny app visible here: [ActivityInfo_R4V/](https://rstudio.unhcr.org/ActivityInfo_R4V/) and enable a scripted process so that:
 
  * Check are consistent with Activity Info  
  

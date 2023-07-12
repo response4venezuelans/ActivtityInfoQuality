@@ -169,7 +169,10 @@ mod_error_report_server <- function(input, output, session, AppReactiveValue) {
 	    paste("Error Report", ".xlsx", sep = "")
 	  },
 	  content = function(file) {
-	    writexl::write_xlsx(AppReactiveValue$error_report[["ErrorReportclean"]], file)
+	    to_out <- list ( metadata = read.csv(system.file("error.csv", 
+	                                            package = "ActivtityInfoQuality")) ,
+	                     QA = AppReactiveValue$error_report[["ErrorReportclean"]])
+	    writexl::write_xlsx(to_out, file)
 	  }
 	)
 	
