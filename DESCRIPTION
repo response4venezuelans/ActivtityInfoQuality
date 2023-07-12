@@ -6,6 +6,7 @@ Maintainer: Edouard Legoupil <legoupil@unhcr.org>
 Description: Performs Data Quality Check and Aggregation based on a
     reponse monitoring database.
 License: MIT + file LICENSE
+URL: https://github.com/edouard-legoupil/ActivtityInfoQuality
 Imports: 
     activityinfo,
     config,
