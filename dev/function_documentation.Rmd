@@ -678,18 +678,18 @@ fct_aggregate_data <- function(df5W,
     dftemplate <- dftemplate |> 
       dplyr::semi_join(monthlist, by = "Month")
 
-  # Get proportions file for each sector in Admin1 and poptype categories
-  if (proportions == "pin")  {
-    dfproportions <- readxl::read_excel(
-       system.file("Proportions.xlsx", 
-                   package = "ActivtityInfoQuality"), 
-       sheet = "pinproportions")
-  } else if (proportions == "target") {
-    dfproportions <- readxl::read_excel(
-       system.file("Proportions.xlsx", 
-                   package = "ActivtityInfoQuality"), 
-        sheet = "targetproportions")
-  }
+    # Get proportions file for each sector in Admin1 and poptype categories
+    if (proportions == "pin")  {
+      dfproportions <- readxl::read_excel(
+         system.file("Proportions.xlsx", 
+                     package = "ActivtityInfoQuality"), 
+         sheet = "pinproportions")
+    } else if (proportions == "target") {
+      dfproportions <- readxl::read_excel(
+         system.file("Proportions.xlsx", 
+                     package = "ActivtityInfoQuality"), 
+          sheet = "targetproportions")
+    }
 
 
 #################### 1. Total Monthly figures ###########
@@ -1193,6 +1193,13 @@ if (totalmodel == "maxsector")
 lookup_dfindicator <- fct_read_lookup(type = "indicator")
 df5W <- fct_read_data() 
 
+
+df5Wctr <- fct_read_data(filter = "country",
+                         value = "Bolivia")
+resultpinsum <- fct_aggregate_data(df5W = df5Wctr,
+                             lookup_dfindicator, 
+                             proportions = "pin",  
+                             totalmodel = "sum" )
 ## Check all 6 combinations...
 
 ### Combination 1

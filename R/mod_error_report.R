@@ -27,9 +27,11 @@ mod_error_report_ui <- function(id) {
 		     width = 3,
 		     # p("Configure cleaning"),
 		      br(),
-		      br() #,
 		      # downloadButton(outputId =  ns("downloadprecleaned"),
 		      #                label = "Download Error report" ) 
+		     downloadButton(outputId =  ns("downloadprecleaned"),
+		                    label = "Download Error report" ) ,
+		      br() #,
 		     ),
 		     column(
 		       width = 3,
@@ -83,6 +85,10 @@ mod_error_report_ui <- function(id) {
 		      width = 12,
 		      status = "primary",
 		      tabsetPanel(type = "tabs",
+		                  
+		                  tabPanel(title= "Table", 
+		                           
+		                           DT::dataTableOutput( ns("Preview_Error_Report") ) ),
 		                  tabPanel(title= "Plots Errors by Country",
 		                               plotly::plotlyOutput(
 		                                 outputId = ns("plot") ,
@@ -90,11 +96,7 @@ mod_error_report_ui <- function(id) {
 		                  tabPanel(title= "Plots Errors by Org", 
 		                           plotly::plotlyOutput(
 		                             outputId = ns("plot2"),
-		                             height = "750px" ) ),
-		                  tabPanel(title= "Table", 
-		                           downloadButton(outputId =  ns("downloadprecleaned"),
-		                                          label = "Download Error report" ) ,
-		                           DT::dataTableOutput( ns("Preview_Error_Report") ) )
+		                             height = "750px" ) )
 		      )
 		    ) # box
 		  ) # column

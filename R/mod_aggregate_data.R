@@ -26,22 +26,22 @@ mod_aggregate_data_ui <- function(id) {
 		      status = "primary",
 		      fluidRow(
 		        column(
-		          width = 4,
+		          width = 6,
 		          radioButtons(
     		        inline = TRUE,
     		        inputId = ns("totalmodel"),
     		        label = "Define Aggregation Model",
     		        choices = c("sum", "maxsector", "southernconemodel"))
 		        ),
+		        # column(
+		        #   width = 4,
+		        #   selectInput(
+		        #     inputId = ns("proportions"),
+		        #     label = "Select proportion to use ",
+		        #     choices = c( "pin", "target"))
+		        # ),
 		        column(
-		          width = 4,
-		          selectInput(
-		            inputId = ns("proportions"),
-		            label = "Select proportion to use ",
-		            choices = c( "pin", "target"))
-		        ),
-		        column(
-		          width = 4,
+		          width = 6,
 		          actionButton(
 		            inputId = ns("run_aggregation"),
 		            label = " Apply Assumption ",
@@ -87,10 +87,18 @@ mod_aggregate_data_server <- function(input, output, session, AppReactiveValue) 
 	observeEvent(input$run_aggregation,{
 	  aggregate <- fct_aggregate_data(AppReactiveValue$df5W,
 	                                  AppReactiveValue$lookup_dfindicator, 
-	                                  proportions = input$proportions,  
+	                                  #proportions = input$proportions,   
+	                                  proportions = "pin",  
 	                                  totalmodel =  input$totalmodel)
+	  
+	  if( is.null(AppReactiveValue$CountryFilter) ){
+	    AppReactiveValue$aggregate <- aggregate
+	  } else {
+	    AppReactiveValue$aggregate <- aggregate |>
+	      dplyr::filter( Country == AppReactiveValue$CountryFilter)
+	  }
 	    
-	  AppReactiveValue$aggregate <- aggregate
+	   #aggregate
 	   #showNotification("Successful",duration = 10, type = "error")
 	  })
 	  

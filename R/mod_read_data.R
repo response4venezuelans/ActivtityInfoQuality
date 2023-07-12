@@ -141,7 +141,16 @@ mod_read_data_server <- function(input, output, session, AppReactiveValue) {
        } else {
          df5W <- fct_read_data( filter = input$filter,
                                 value = input$value)
-     }
+       }
+    
+    
+    ### Create a country filter to the final aggregate report
+    if ( input$filter == "country" & !( input$value == "All")) {
+      AppReactiveValue$CountryFilter <- input$value
+    } else {
+      AppReactiveValue$CountryFilter <- NULL
+    }
+    
     ## Get this within the reactive value
     AppReactiveValue$df5W <- df5W 
      ## Precompile in the reactive value the rest of the app with default value..
@@ -164,9 +173,14 @@ mod_read_data_server <- function(input, output, session, AppReactiveValue) {
     aggregate <- fct_aggregate_data(AppReactiveValue$df5W,
                                        AppReactiveValue$lookup_dfindicator, 
                                        proportions = "pin",  
-                                       totalmodel = "sum"   
-    )
-    AppReactiveValue$aggregate <- aggregate
+                                       totalmodel = "sum"   )
+    
+    if( is.null(AppReactiveValue$CountryFilter) ){
+      AppReactiveValue$aggregate <- aggregate
+    } else {
+    AppReactiveValue$aggregate <- aggregate |>
+                                  dplyr::filter( Country == AppReactiveValue$CountryFilter)
+    }
       
       
     
