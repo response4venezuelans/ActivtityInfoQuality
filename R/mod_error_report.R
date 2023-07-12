@@ -85,24 +85,21 @@ mod_error_report_ui <- function(id) {
 		      tabsetPanel(type = "tabs",
 		                  tabPanel(title= "Plots Errors by Country",
 		                               plotly::plotlyOutput(
-		                                 outputId = ns("plot")) ,
-		                                 height = "750px")
-		                  ),
+		                                 outputId = ns("plot") ,
+		                                 height = "750px") ),
 		                  tabPanel(title= "Plots Errors by Org", 
 		                           plotly::plotlyOutput(
-		                             outputId =ns("plot2"),
-		                             height = "750px" )
-		                  ),
+		                             outputId = ns("plot2"),
+		                             height = "750px" ) ),
 		                  tabPanel(title= "Table", 
 		                           downloadButton(outputId =  ns("downloadprecleaned"),
 		                                          label = "Download Error report" ) ,
-		                           DT::dataTableOutput( ns("Preview_Error_Report") )
-		                  )
+		                           DT::dataTableOutput( ns("Preview_Error_Report") ) )
 		      )
-		    )
-		  )
-		)
-	
+		    ) # box
+		  ) # column
+		) # row
+	) # tab
 }
  
 #' Module Server
@@ -118,14 +115,14 @@ mod_error_report_server <- function(input, output, session, AppReactiveValue) {
 	ns <- session$ns
 
 	## trigger the function for error check
-	observeEvent(input$run_err_report,{
-	  #tocheck <- AppReactiveValue$result
-	  #AppReactiveValue$result <- Error_report 
-	  AppReactiveValue$result <- fct_error_report(
-	                             result = AppReactiveValue$result,
-	                             countryname = input$countryname)
-	  
-	})
+	# observeEvent(input$run_err_report,{
+	#   #tocheck <- AppReactiveValue$result
+	#   #AppReactiveValue$result <- Error_report 
+	#   AppReactiveValue$result <- fct_error_report(
+	#                              result = AppReactiveValue$result,
+	#                              countryname = input$countryname)
+	#   
+	# })
 	 
 	 #  output number of activities and error 
 	 output$vActivities <- renderValueBox({
@@ -157,11 +154,11 @@ mod_error_report_server <- function(input, output, session, AppReactiveValue) {
 	  
 	 # interactive plot with plotly
 	  output$plot <- plotly::renderPlotly({
-	    AppReactiveValue$result$plot_Country
+	    AppReactiveValue$error_report$plot_Country
 	    })
 	  
 	  output$plot2 <- plotly::renderPlotly({
-	    AppReactiveValue$result$plot_Appealing
+	    AppReactiveValue$error_report$plot_Appealing
 	    })
 	  
 	#showNotification("Successful",duration = 10, type = "error")
@@ -172,12 +169,12 @@ mod_error_report_server <- function(input, output, session, AppReactiveValue) {
 	    paste("Error Report", ".xlsx", sep = "")
 	  },
 	  content = function(file) {
-	    writexl::write_xlsx(AppReactiveValue$result[["ErrorReportclean"]], file)
+	    writexl::write_xlsx(AppReactiveValue$error_report[["ErrorReportclean"]], file)
 	  }
 	)
 	
 	output$Preview_Error_Report <-  DT::renderDataTable(
-	  expr = as.data.frame( AppReactiveValue$result[["ErrorReportclean"]]),
+	  expr = as.data.frame( AppReactiveValue$error_report[["ErrorReportclean"]]),
   	#extensions = c("Buttons"),
   	options = list(
   	  dom = 'lfrtip',

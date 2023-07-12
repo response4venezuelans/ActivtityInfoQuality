@@ -29,16 +29,16 @@ mod_aggregate_data_ui <- function(id) {
 		          width = 4,
 		          radioButtons(
     		        inline = TRUE,
-    		        inputId = ns("totalmodel_agg"),
+    		        inputId = ns("totalmodel"),
     		        label = "Define Aggregation Model",
     		        choices = c("sum", "maxsector", "southernconemodel"))
 		        ),
 		        column(
 		          width = 4,
 		          selectInput(
-		            inputId = ns("country_name_agg"),
-		            label = "Filter Country ",
-		            choices = c("NULL"))
+		            inputId = ns("proportions"),
+		            label = "Select proportion to use ",
+		            choices = c( "pin", "target"))
 		        ),
 		        column(
 		          width = 4,
@@ -85,16 +85,18 @@ mod_aggregate_data_server <- function(input, output, session, AppReactiveValue) 
 	
 	## Run on button!
 	observeEvent(input$run_aggregation,{
-	  AppReactiveValue$result <- fct_error_report( 
-	                                  result = AppReactiveValue$result,
-	                                  countryname = input$countryname_agg,
-	                                  totalmodel = input$totalmodel_agg)
+	  aggregate <- fct_aggregate_data(AppReactiveValue$df5W,
+	                                  AppReactiveValue$lookup_dfindicator, 
+	                                  proportions = input$proportions,  
+	                                  totalmodel =  input$totalmodel)
+	    
+	  AppReactiveValue$aggregate <- aggregate
 	   #showNotification("Successful",duration = 10, type = "error")
 	  })
 	  
 	 ## Preview consolidated
 	 output$Preview_consolidated <- DT::renderDataTable( 
-	  expr = as.data.frame( AppReactiveValue$result[["ConsolidatedReport"]]),
+	  expr = as.data.frame( AppReactiveValue$aggregate ),
 	  #extensions = c("Buttons"),
 	  options = list(
 	    dom = 'lfrtip',
@@ -113,7 +115,7 @@ mod_aggregate_data_server <- function(input, output, session, AppReactiveValue) 
 	      paste("Consolidated_Report", ".xlsx", sep = "")
 	    },
 	    content = function(file) {
-	      writexl::write_xlsx(AppReactiveValue$result[["ConsolidatedReport"]], file)
+	      writexl::write_xlsx(AppReactiveValue$aggregate, file)
 	    }
 	  )
 	  

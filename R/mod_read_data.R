@@ -45,9 +45,9 @@ mod_read_data_ui <- function(id) {
                                              selected ="All"),
                                  actionButton(
                                    inputId = ns("Run_Script"),
-                                   label = "Pull from Activity Info (API) database ",
+                                   label = "Pull from Activity Info (API) database - please wait a bit until you get the data preview below...",
                                    icon = icon("cloud-arrow-down"),
-                                   width = "600px" )
+                                   width = "100%" )
                                  ),
                         
                         tabPanel(title= "Option 2: Alternatively upload your own Data File",
@@ -142,31 +142,41 @@ mod_read_data_server <- function(input, output, session, AppReactiveValue) {
          df5W <- fct_read_data( filter = input$filter,
                                 value = input$value)
      }
+    ## Get this within the reactive value
+    AppReactiveValue$df5W <- df5W 
      ## Precompile in the reactive value the rest of the app with default value..
      error_report <- fct_error_report(df5W, 
                                    AppReactiveValue$lookup_dfadmin1, 
                                    AppReactiveValue$lookup_dfadmin2, 
                                    AppReactiveValue$lookup_dfindicator, 
                                    AppReactiveValue$lookup_dfpartner)
-    
-    ## Get this within the ractive value
-    AppReactiveValue$df5W <- df5W 
     AppReactiveValue$error_report <- error_report 
     
     ## Get key metrics
-    AppReactiveValue$vActivities  <- nrow(error_report)
-    AppReactiveValue$vErrors <- sum(!is.na(error_report$Review))
+    AppReactiveValue$vActivities  <- nrow(error_report[["ErrorReportclean"]])
+    AppReactiveValue$vErrors <- sum(!is.na(error_report[["ErrorReportclean"]]$Review2))
     AppReactiveValue$vPercentage <- round(
-                    sum(!is.na(error_report$Review))
-                    /nrow(error_report) * 100, 
+                    sum(!is.na(error_report[["ErrorReportclean"]]$Review2))
+                    /nrow(error_report[["ErrorReportclean"]]) * 100, 
                     digits = 1)
+    
+    ## precompile aggregate per default
+    aggregate <- fct_aggregate_data(AppReactiveValue$df5W,
+                                       AppReactiveValue$lookup_dfindicator, 
+                                       proportions = "pin",  
+                                       totalmodel = "sum"   
+    )
+    AppReactiveValue$aggregate <- aggregate
+      
+      
     
     # shiny::showNotification(ui = "Data Import Complete",
     #                  duration = 10,
     #                  type = "error")
+    
     })
   
-  
+  ### Alternative upload offline data
   ## option to import via copy paste
   # imported <- datamods::import_copypaste_server(
   #   id = "myid",
@@ -186,8 +196,38 @@ mod_read_data_server <- function(input, output, session, AppReactiveValue) {
   # })  
   
   output$status <- renderPrint({
+    
+    ## Get this within the reactive value
+    AppReactiveValue$df5W <- imported$data()
+    # ## And finally display status..... 
     imported$status()
   })
+    
+  observeEvent(input$confirm, {
+  #observeEvent(input$container_confirm_btn , {
+    # ## Precompile in the reactive value the rest of the app with default value..
+    AppReactiveValue$error_report  <- fct_error_report(AppReactiveValue$df5W,
+                                     AppReactiveValue$lookup_dfadmin1,
+                                     AppReactiveValue$lookup_dfadmin2,
+                                     AppReactiveValue$lookup_dfindicator,
+                                     AppReactiveValue$lookup_dfpartner)
+
+    # ## Get key metrics
+    AppReactiveValue$vActivities  <- nrow(AppReactiveValue$error_report[["ErrorReportclean"]])
+    AppReactiveValue$vErrors <- sum(!is.na(AppReactiveValue$error_report[["ErrorReportclean"]]$Review2))
+    AppReactiveValue$vPercentage <- round(
+      sum(!is.na(AppReactiveValue$error_report[["ErrorReportclean"]]$Review2))
+      /nrow(AppReactiveValue$error_report[["ErrorReportclean"]]) * 100,
+      digits = 1)
+    
+    # ## precompile aggregate per default
+    AppReactiveValue$aggregate <- fct_aggregate_data(AppReactiveValue$df5W,
+                                    AppReactiveValue$lookup_dfindicator,
+                                    proportions = "pin",
+                                    totalmodel = "sum"    ) 
+  })
+  
+  
   
   #pasted <- imported$data   # |>
   #           dplyr::select(

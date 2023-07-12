@@ -198,14 +198,14 @@ fct_error_report <- function(  df5W,
   #             axis = "x",
   #             axis_title = FALSE)
    
-   
+   require(ggplot2)
   plot_Appealing <- df5Werror |>
         dplyr::select(Appealing_org, Review2 ) |>
         dplyr::group_by(Appealing_org) |>
         dplyr::summarise(Review2 = sum(Review2, na.rm = TRUE) ) |>
        dplyr::filter(Review2  >0 )|>
 	      #filter(!is.na(Review)) |>
-	      ggplot() +
+	      ggplot2::ggplot() +
 	      aes(x = reorder(Appealing_org, Review2),
 	          y = Review2) +
 	      geom_col(fill = "#0c4c8a" ) +

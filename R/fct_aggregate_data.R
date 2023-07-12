@@ -291,7 +291,7 @@ if (totalmodel == "maxsector")
          -Consolidated_Other_above_18, 
          -Consolidated_Other_under_18) |> 
   # get the breakdown of each age and gender categories by multiplying the pop type category by the proportions
-  rowwise() |> 
+  dplyr::rowwise() |> 
   dplyr::mutate(RMDestGirls = round(Consolidated_RMindestination * Dest_GIrls,0),
          RMDestBoys = round(Consolidated_RMindestination * Dest_Boys,0),
          RMDestWomen = round(Consolidated_RMindestination * Dest_Women,0),
