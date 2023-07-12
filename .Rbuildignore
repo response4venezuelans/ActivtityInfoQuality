@@ -7,3 +7,5 @@
 ^dev$
 ^rsconnect$
 ^ActivtityInfoQuality2\.Rproj$
+^app\.R$
+^manifest\.json$

@@ -31,28 +31,41 @@ mod_read_data_ui <- function(id) {
             #  or upload you regional ENG 5W import table 
             
             tabsetPanel(type = "tabs",
-                        tabPanel(title= "Option 1: Copy-Paste Data in Browser",
-                                 datamods::import_copypaste_ui(
-                                   id = ns("myid"), 
-                                   title = " Do not forget to paste with the header row
-                                   so that the data can be properly recognised.",
-                                   name_field = FALSE),
-                                 verbatimTextOutput(outputId = ns("status"))
-                        ),
-                        tabPanel(title= "Option 2: Pull Data from ActivityInfo API",
+                        tabPanel(title= "Option 1: Pull Data already submitted to ActivityInfo",
                                  br(),
-                                 "The action below will take a bit of time to complete.",
+                                 "The action below will take a bit of time to complete if you do not use filter.",
                                  br(),
+                                 radioButtons(inputId = ns("filter"),
+                                             label = "Filter to use", 
+                                             choices =  c("country", "partner") ,
+                                             selected ="country"),
+                                 selectInput(inputId = ns("value"),
+                                             label = "select value for the filter", 
+                                             choices = NULL ,
+                                             selected ="All"),
                                  actionButton(
                                    inputId = ns("Run_Script"),
                                    label = "Pull from Activity Info (API) database ",
                                    icon = icon("cloud-arrow-down"),
                                    width = "600px" )
-                                 )
+                                 ),
+                        
+                        tabPanel(title= "Option 2: Alternatively upload your own Data File",
+                                 # datamods::import_copypaste_ui(
+                                 #   id = ns("myid"), 
+                                 #   title = " Do not forget to paste with the header row
+                                 #   so that the data can be properly recognised.",
+                                 #   name_field = FALSE),
+                                 
+                                 datamods::import_file_ui( id = ns("myid"), 
+                                                           file_extensions = c( ".xlsx")),
+                                 
+                                 verbatimTextOutput(outputId = ns("status"))
+                        )
             )
           )
         )
-      ),
+      ) ,
       fluidRow(
         column(
           width = 12,
@@ -99,174 +112,171 @@ mod_read_data_ui <- function(id) {
 mod_read_data_server <- function(input, output, session, AppReactiveValue) {
   ns <- session$ns
   
-  
-  ## option to import via copy paste
-  imported <- datamods::import_copypaste_server(
-    id = "myid",
-    btn_show_data = FALSE)
-  
-  output$status <- renderPrint({
-    if( is.null(imported$status()))
-    { "IDLE" } else {
-     # AppReactiveValue$result <- fct_read_data( data = imported$data)
-      imported$status()
-      #AppReactiveValue$result <- fct_read_data( data = imported$data)
-      # Data(read_data_2023_local(imported$data()))
-      ## load from API to get the reference
-      resultapi <- fct_read_data()
-      
-      # shiny::showNotification("Data Processing Complete",
-      #                         duration = 10, 
-      #                         type = "error")
-      
-      AppReactiveValue$result <- resultapi
-      AppReactiveValue$countrieshere <- unique(AppReactiveValue$result$df5W$Country)
-      
-      ## Clean a bit
-      pasted <- imported$data  |>
-                dplyr::select(
-                tidyselect::any_of(Country,
-                              Admin1,
-                              Admin2,
-                              Appealing_org,
-                              Implementation,
-                              Implementing_partner,
-                              Month,
-                              Subsector,
-                              Indicator,
-                              Activity_Name,
-                              Activity_Description,
-                              RMRPActivity,
-                              CVA,
-                              Value,
-                              Delivery_mechanism,
-                              Quantity_output,
-                              Total_monthly,
-                              New_beneficiaries,
-                              IN_DESTINATION,
-                              IN_TRANSIT,
-                              Host_Communities,
-                              PENDULARS,
-                              Returnees,
-                              Girls,
-                              Boys,
-                              Women,
-                              Men,
-                              Other_under,
-                              Other_above))
-                  
-      #           )
-      # colnames(pasted) <- c("Country",
-      #                     "Admin1",
-      #                     "Admin2",
-      #                     "Appealing_org",
-      #                     "Implementation",
-      #                     "Implementing_partner",
-      #                     "Month",
-      #                     "Subsector",
-      #                     "Indicator",
-      #                     "Activity_Name",
-      #                     "Activity_Description",
-      #                     "RMRPActivity",
-      #                     "CVA",
-      #                     "Value",
-      #                     "Delivery_mechanism",
-      #                     "Quantity_output",
-      #                     "Total_monthly",
-      #                     "New_beneficiaries",
-      #                     "IN_DESTINATION",
-      #                     "IN_TRANSIT",
-      #                     "Host_Communities",
-      #                     "PENDULARS",
-      #                     "Returnees",
-      #                     "Girls",
-      #                     "Boys",
-      #                     "Women",
-      #                     "Men",
-      #                     "Other_under",
-      #                     "Other_above")
-      
-      pasted <- pasted |>
-        dplyr::mutate(
-          dplyr::across( c(Value,
-                    Quantity_output,
-                    Total_monthly,
-                    New_beneficiaries,
-                    IN_DESTINATION,
-                    IN_TRANSIT,
-                    Host_Communities,
-                    PENDULARS,
-                    Returnees,
-                    Girls,
-                    Boys,
-                    Women,
-                    Men,
-                    Other_under,
-                    Other_above), as.numeric) ) |>
-          dplyr::arrange(Country, Month) |>
-          dplyr::na_if("")
-        
-      
-      ## replace the 5W data with the pasted one
-      AppReactiveValue$result[["df5W"]] <-   pasted 
-      countrieshere <- unique(AppReactiveValue$resultapi$df5W$Country)
-      
-      ## update the filters based on the data..
-      updateSelectInput(session = session,
-                        inputId = "country_name",
-                        choices = c("All", AppReactiveValue$countrieshere))
-      
-      updateSelectInput(session = session,
-                        inputId ="country_name_agg" ,
-                        choices = c("All", AppReactiveValue$countrieshere ))
-      
-    }
-    })  
-  
+
+  ## Filters for API Call
+  observeEvent(input$filter, {
+  updateSelectInput(session = session,
+             inputId ="value" ,
+             choices = c("All", 
+                         if( input$filter == "country"){
+                           AppReactiveValue$lookup_dfadmin1 |>
+                             dplyr::select(Country) |>
+                             dplyr::distinct() |>
+                             dplyr::arrange()|>
+                             dplyr::pull()
+                         } else {
+                           AppReactiveValue$lookup_dfpartner |>
+                             dplyr::select(Name) |>
+                             dplyr::distinct() |>
+                             dplyr::arrange()|>
+                             dplyr::pull()
+                         }
+                         ))
+  })
   
   ## option to import via API
   observeEvent(input$Run_Script, {
-     resultapi <- fct_read_data()
-     
+     if ( input$value == "All") {
+         df5W <- fct_read_data() 
+       } else {
+         df5W <- fct_read_data( filter = input$filter,
+                                value = input$value)
+     }
      ## Precompile in the reactive value the rest of the app with default value..
-     resultapi <- fct_error_report( result =  resultapi)
-     resultapi <- fct_aggregate_data(result =  resultapi,
-                           countryname = NULL,
-                           totalmodel  = "sum")
+     error_report <- fct_error_report(df5W, 
+                                   AppReactiveValue$lookup_dfadmin1, 
+                                   AppReactiveValue$lookup_dfadmin2, 
+                                   AppReactiveValue$lookup_dfindicator, 
+                                   AppReactiveValue$lookup_dfpartner)
+    
     ## Get this within the ractive value
-    AppReactiveValue$result <- resultapi 
-    AppReactiveValue$countrieshere <- unique(AppReactiveValue$result$df5W$Country)
+    AppReactiveValue$df5W <- df5W 
+    AppReactiveValue$error_report <- error_report 
     
     ## Get key metrics
-    
-    AppReactiveValue$vActivities  <- nrow(AppReactiveValue$result[["ErrorReportclean"]])
-    
-    AppReactiveValue$vErrors <- sum(!is.na(AppReactiveValue$result[["ErrorReportclean"]]$Review))
-    
+    AppReactiveValue$vActivities  <- nrow(error_report)
+    AppReactiveValue$vErrors <- sum(!is.na(error_report$Review))
     AppReactiveValue$vPercentage <- round(
-                    sum(!is.na(AppReactiveValue$result[["ErrorReportclean"]]$Review))
-                    /nrow(AppReactiveValue$result[["ErrorReportclean"]]) * 100, 
+                    sum(!is.na(error_report$Review))
+                    /nrow(error_report) * 100, 
                     digits = 1)
-    
-    
-    ## update the filters based on the data..
-    updateSelectInput(session = session,
-                      inputId = "country_name",
-                      choices = c("All", AppReactiveValue$countrieshere))
-    
-    updateSelectInput(session = session,
-                      inputId ="country_name_agg" ,
-                       choices = c("All", AppReactiveValue$countrieshere ))
     
     # shiny::showNotification(ui = "Data Import Complete",
     #                  duration = 10,
     #                  type = "error")
     })
   
-
+  
+  ## option to import via copy paste
+  # imported <- datamods::import_copypaste_server(
+  #   id = "myid",
+  #   btn_show_data = FALSE)
+  
+  ## Import via file
+  imported <- datamods::import_file_server(id = "myid",
+                                           show_data_in = "modal",
+                                           return_class = "data.frame")
+  
+  # output$status <- renderPrint({
+  #   if( is.null(imported$status()))
+  #   { "IDLE" } else {
+  #     # AppReactiveValue$result <- fct_read_data( data = imported$data)
+  #     imported$status() 
+  #   }
+  # })  
+  
+  output$status <- renderPrint({
+    imported$status()
+  })
+  
+  #pasted <- imported$data   # |>
+  #           dplyr::select(
+  #           tidyselect::any_of(Country,
+  #                         Admin1,
+  #                         Admin2,
+  #                         Appealing_org,
+  #                         Implementation,
+  #                         Implementing_partner,
+  #                         Month,
+  #                         Subsector,
+  #                         Indicator,
+  #                         Activity_Name,
+  #                         Activity_Description,
+  #                         RMRPActivity,
+  #                         CVA,
+  #                         Value,
+  #                         Delivery_mechanism,
+  #                         Quantity_output,
+  #                         Total_monthly,
+  #                         New_beneficiaries,
+  #                         IN_DESTINATION,
+  #                         IN_TRANSIT,
+  #                         Host_Communities,
+  #                         PENDULARS,
+  #                         Returnees,
+  #                         Girls,
+  #                         Boys,
+  #                         Women,
+  #                         Men,
+  #                         Other_under,
+  #                         Other_above))
+  
+  #           )
+  # colnames(pasted) <- c("Country",
+  #                     "Admin1",
+  #                     "Admin2",
+  #                     "Appealing_org",
+  #                     "Implementation",
+  #                     "Implementing_partner",
+  #                     "Month",
+  #                     "Subsector",
+  #                     "Indicator",
+  #                     "Activity_Name",
+  #                     "Activity_Description",
+  #                     "RMRPActivity",
+  #                     "CVA",
+  #                     "Value",
+  #                     "Delivery_mechanism",
+  #                     "Quantity_output",
+  #                     "Total_monthly",
+  #                     "New_beneficiaries",
+  #                     "IN_DESTINATION",
+  #                     "IN_TRANSIT",
+  #                     "Host_Communities",
+  #                     "PENDULARS",
+  #                     "Returnees",
+  #                     "Girls",
+  #                     "Boys",
+  #                     "Women",
+  #                     "Men",
+  #                     "Other_under",
+  #                     "Other_above")
+  
+  # pasted <- pasted |>
+  #   dplyr::mutate(
+  #     dplyr::across( c(Value,
+  #                      Quantity_output,
+  #                      Total_monthly,
+  #                      New_beneficiaries,
+  #                      IN_DESTINATION,
+  #                      IN_TRANSIT,
+  #                      Host_Communities,
+  #                      PENDULARS,
+  #                      Returnees,
+  #                      Girls,
+  #                      Boys,
+  #                      Women,
+  #                      Men,
+  #                      Other_under,
+  #                      Other_above), as.numeric) ) |>
+  #   dplyr::arrange(Country, Month) |>
+  #   dplyr::na_if("")
+  # AppReactiveValue$pasted <- pasted
+  
+  
   ## Data Preview
   output$Preview_Data <- DT::renderDataTable(
-    expr = as.data.frame(AppReactiveValue$result[["df5W"]] ) ,
+    expr = as.data.frame(AppReactiveValue$df5W ) ,
    # extensions = c("Buttons"),
     options = list(
       dom = 'lfrtip',

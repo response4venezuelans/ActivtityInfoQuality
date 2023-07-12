@@ -18,7 +18,6 @@ This package enable a scripted process so that:
  
  * Reproducibility is enforced
  
- The package was built from [{graveler}](https://edouard-legoupil.github.io/graveler/).
 
 The consolidated report generation will only be working if the data is clean: errors in breakdowns in the activities will be in the consolidated report
 
@@ -59,7 +58,7 @@ A series of errors are checked by the Data Quality check report. They can be div
 
 ### Automatic Cleaning
 
-16 automatic cleanings are performed, all of them being optional and can be turned off. We can group them in various categories:
+Automatic cleanings can be grouped in various categories:
 
  * Automatic Yes or No for missing values  
  
@@ -91,6 +90,18 @@ A series of errors are checked by the Data Quality check report. They can be div
 ### Data Aggregation 
 
 Aggregation models differ from a country to another and thus it is important to register the model you are applying for us to understand how they are processed. 
+
+
+## For DEV
+
+The project was built from the  [{activityinfo}](https://www.activityinfo.org/support/docs/R/) R package and [{graveler}](https://edouard-legoupil.github.io/graveler/) project template.
+
+It includes a shiny app (`run_app()`) together with a few functions
+
+ * `fct_read_lookup` allows to pull admin1, admin2, partner and country  from ActivityInfo api
+ * `fct_read_data` pull the 5W info from ActivityInfo api potentially with filters
+ * `fct_error_report` performs the QA on the data
+ * `fct_aggregate_data` perform the data aggregation according to different scenario
 
 ## Next Steps
 

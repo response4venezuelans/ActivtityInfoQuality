@@ -4,16 +4,24 @@
 \alias{fct_error_report}
 \title{fct_error_report}
 \usage{
-fct_error_report(result, countryname = NULL)
+fct_error_report(
+  df5W,
+  lookup_dfadmin1,
+  lookup_dfadmin2,
+  lookup_dfindicator,
+  lookup_dfpartner
+)
 }
 \arguments{
-\item{result}{output of the previous function fct_read_data()}
+\item{df5W}{fame with response tracking data}
 
-\item{countryname}{name of the country to filter the report
-can be set to "All" - or any of  "Aruba", "Curaçao",
- "Costa Rica", "Dominican Republic",
- "Trinidad and Tobago", "Guyana", 
-              "Mexico", "Panama"}
+\item{lookup_dfadmin1}{fame with admin1 look up}
+
+\item{lookup_dfadmin2}{fame with admin2 look up}
+
+\item{lookup_dfindicator}{fame with indicator look up}
+
+\item{lookup_dfpartner}{fame with partner look up}
 }
 \value{
 result list with results and data error...
@@ -26,50 +34,60 @@ Currently this includes the 19 following Check:
 
  __Completeness__:
 
- 1.  missingcountry: Country information missing
- 2. countryadmincheck: Administrative unit level1 not matching 
- 3.  admin1and2check: Administrative unit level2 not matching 
- 4.  miss_appeal_org: Missing appealing organsation
- 5.  miss_setup:   Missing Implementation
- 6.  miss_implementing_org:   Missing name of implementer
- 7.  miss_month: Missing month
- 8.  missing_what,
+ 1. missingcountry: Country and admin 1 information is missing.
+ 2. countryadmincheck: Administrative unit level 1 not matching the name in the ActivityInfo 5W "admin2" reference table.
+ 3.  admin1and2check: Administrative unit level 2 not matching the name for each respective admin1 in the ActivityInfo 5W "admin2" reference table. 
+ 4.  miss_appeal_org: Missing appealing organization or organization name not corresponding to the name included in the ActivityInfo 5W "partners" reference table
+ 5.  miss_setup: Checks if the field is empty, as it is mandatory to fill this variable with a "yes" for cases where there is an implementing partner, or with a "no" if the activity corresponds to direct implementation.
+ 6.  miss_implementing_org: If "yes" is selected in the "implementation set up" field, then a name for the implementing organization should be included in the corresponding field, otherwise it will retrieve an error.
+ 7.  miss_month: Missing month information.
+ 8.  missing_what: If there is missing information for the 5W "what" fields, more specifically: indicator sector, indicator, activity name, RMRP activity, and CVA.
   
  __Consistency__:
- 9.  wrongsectindicator, 
- 10.  zeroCVA, 
- 11.  missingmechanism, 
- 12.  CVANotoYes,         
- 13.  MultipurposeSector, 
- 14.  DirectAssistanceNoBenef, 
- 15.  NewBenefvstotal, 
+ 9.  wrongsectindicator: If the indicator name does not correspond to the selected sector, as per the ActivityInfo 5W "indicators RMRP 23" reference table. 
+ 10.  zeroCVA: when the CVA field is "yes", then a CVA value in USD must be entered, otherwise it will retrieve an error.
+ 11.  missingmechanism: when the CVA field is "yes", then a CVA delivery mechanism must be entered, otherwise it will retrieve an error.
+ 12.  CVANotoYes: If the CVA = “No” but that the Value or Delivery Mechanism contains data, it will retrieve an error as those should be empty or the CVA should be “Yes”.          
+ 13.  MultipurposeSector: It will retrieve an error when the selected indicator sector is "Multipurpose Cash Assistance (MPC)" and CVA = "No". 
+ 14.  DirectAssistanceNoBenef: If the indicator type selected is "Direct Assistance" then there should be positive values entered for new monthly beneficiaries and total beneficiaries, otherwise it will retrieve an error.  
+ 15.  NewBenefvstotal: if the value for new monthly beneficiaries exceeds the value of total monthly beneficiaries. 
  
  __Accuracy__:
- 16.  PopTypeBreakdown, 
- 17.  AGDBreakdown, 
- 18.  CBuildingNoBenef, 
- 19.  NoOutput
+ 16.  PopTypeBreakdown:  For "Direct Assistance" indicators, checks if the sum of the population type breakdown equals the new beneficiaries value. If an ERROR appears, please review the breakdown values or the new beneficiaries' values in the corresponding activity
+ 17.  AGDBreakdown: For "Direct Assistance" indicators, checks if the sum of the age and gender breakdown equals the new beneficiaries' value. If an ERROR appears, please review the breakdown values or the new beneficiaries' values in the corresponding activity
+ 18.  CBuildingNoBenef: For "Capacity Building" indicators, checks if there is positive values for the total monthly beneficiaries field, as this field should be reported, otherwise it will retrieve an error.
+ 19.  NoOutput: For indicators other than the ones included under "Direct Assistance" and "Capacity Building", a value for"Quantity of Output" should always be reported, otherwise it will retrieve an error.
 }
 \examples{
-## Get data
-result0 <- fct_read_data()
-## Fix errors
-result <- fct_error_report(result = result0,
-                             countryname = NULL)
- 
-## Use parameters
-result <- fct_error_report(result = result0,
-                           countryname ="All")
-## charts 
-print(result$plot_Country)
-result <- fct_error_report(result = result0,
-                           countryname ="Colombia")
+lookup_dfadmin1 <- fct_read_lookup(type = "admin1")
+lookup_dfadmin2 <- fct_read_lookup(type = "admin2")
+lookup_dfpartner <- fct_read_lookup(type = "partner")
 
-print(result$plot_Appealing)
-## Error
-head(result[["Error"]], 10)
+lookup_dfindicator <- fct_read_lookup(type = "indicator")
+
+df5Wpart <- fct_read_data(filter = "partner",
+    value = "United Nations High Commissioner for Refugees (UNHCR)")
+resultpart <- fct_error_report(df5Wpart, 
+                               lookup_dfadmin1, 
+                               lookup_dfadmin2, 
+                               lookup_dfindicator, 
+                               lookup_dfpartner)
+ 
+print(resultpart$plot_Country)
+
+## Second example
+df5Wctr <- fct_read_data(filter = "country",
+                         value = "Peru")
+resultctr <- fct_error_report(df5Wctr, 
+                               lookup_dfadmin1, 
+                               lookup_dfadmin2, 
+                               lookup_dfindicator, 
+                               lookup_dfpartner)
+
+print(resultctr$plot_Appealing) 
+
 ## Display fixed data 
-head(result[["ErrorReportclean"]], 10)
+head(resultctr[["ErrorReportclean"]], 10)
 
 
 }

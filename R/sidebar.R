@@ -1,3 +1,12 @@
+#' UI Side menau
+#'
+#' This function is internally used to manage the side menu
+#'
+#' @import shiny
+#' @import shinydashboard
+#' @noRd
+#' @keywords internal
+#'
 sidebar <- function() {
   dashboardSidebar(
     sidebarMenu(

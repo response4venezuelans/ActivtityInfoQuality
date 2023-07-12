@@ -4,15 +4,15 @@
 \alias{fct_read_data}
 \title{fct_read_data}
 \usage{
-fct_read_data()
+fct_read_data(filter = NULL, value = NULL)
+}
+\arguments{
+\item{filter}{what to filter on (country or partner) so that we do not need to load everything}
+
+\item{value}{value to filter from}
 }
 \value{
-list with the content of the activity info DB 
-               * df5W 
-               * dfadmin1  
-               * dfadmin2  
-               * dfindicator   
-               * dfpartner
+df5W  response tracking potentially filtered
 }
 \description{
 Pull Data From ActivityInfo
@@ -33,12 +33,18 @@ variable
  # rm(token)
 }
 \examples{
-result <- fct_read_data()
-## list of results
 
-head(result[["df5W"]], 10)
-head(result[["dfadmin1"]], 10)
-head(result[["dfadmin2"]], 10)
-head(result[["dfindicator"]], 10)
-head(result[["dfpartner"]], 10)
+## Pulling everything... can be long..
+df5W <- fct_read_data()
+head( df5W, 10)
+
+## testing the filters
+df5Wctr <- fct_read_data(filter = "country",
+                         value = "Colombia")
+head( df5Wctr, 10)
+
+df5Wpart <- fct_read_data(filter = "partner",
+                         value = "United Nations High Commissioner for Refugees (UNHCR)")
+head( df5Wpart , 10)
+
 }

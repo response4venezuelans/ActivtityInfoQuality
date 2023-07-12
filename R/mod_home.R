@@ -28,23 +28,28 @@ mod_home_ui <- function(id) {
 		          uploading data.",
         style = "font-size: 20px"),
       br(),
-      p("This app is designed to quickly check your data before bulk-uploading them. 
-		      It also aggregate dataset based on different scenarios",
+      p("This app is designed to check existing data in ActivityInfo or to 
+        quickly check offline data before bulk-uploading it.",
         style = "font-size: 20px"),
       br(),
-      p("Please report issues to the Regional platform IM team",
-        style = "font-size: 12px"),
+      p("After Quality Assurance (QA), user can then download an aggregated version of
+        their dataset according to context specific method and use this data for 
+        other reporting requirement.",
+        style = "font-size: 20px"),
+      br(),
       br(),
       
-      fluidRow(
-        actionButton(NS(id, "go_to_firstmod"),
-                     label = "Get Data", 
-                     width = "150px",
-                     style='font-size: 16px; color: #18375F',
-                     icon = icon("chevron-right")),
-        style = "font-size: 18px; text-align: right;"
-      ),
-      br()
+
+      br(),
+      p(tags$i( class = "fa fa-github"),
+        "App built with ",
+        tags$a(href="https://edouard-legoupil.github.io/graveler/",
+               "{graveler}" ),
+        " -- report ",
+        tags$a(href="https://github.com/response4venezuelans/ActivtityInfoQuality/issues",
+               "issues here or directly to the Regional platform Info Mngnt team." ,
+        ),
+        style = "font-size: 10px")
     ) 
   )
 }

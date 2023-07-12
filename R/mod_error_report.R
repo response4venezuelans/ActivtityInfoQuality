@@ -25,16 +25,8 @@ mod_error_report_ui <- function(id) {
 		    fluidRow(
 		     column(
 		     width = 3,
-		      p("Configure cleaning"),
+		     # p("Configure cleaning"),
 		      br(),
-  		    selectInput(inputId = ns("countryname"),
-  		                    label = "Country Name", 
-  		                    choices =  c("All", "Argentina") ,
-  		                selected ="All"),
-		      br(),
-		      actionButton( inputId = ns("run_err_report"),
-		        label = " Apply filter ",
-		        icon = icon("filter") ),
 		      br() #,
 		      # downloadButton(outputId =  ns("downloadprecleaned"),
 		      #                label = "Download Error report" ) 
@@ -91,20 +83,15 @@ mod_error_report_ui <- function(id) {
 		      width = 12,
 		      status = "primary",
 		      tabsetPanel(type = "tabs",
-		                  tabPanel(title= "Plots  errors",
-		                           fluidRow(
-		                             column(
-		                               width = 6, 
+		                  tabPanel(title= "Plots Errors by Country",
 		                               plotly::plotlyOutput(
 		                                 outputId = ns("plot")) ,
-		                                 height = "550px"),
-		                             column(
-		                               width = 6, 
-		                               plotly::plotlyOutput(
-		                                 outputId =ns("plot2"),
-		                                 height = "550px" )
-		                             )
-		                           )
+		                                 height = "750px")
+		                  ),
+		                  tabPanel(title= "Plots Errors by Org", 
+		                           plotly::plotlyOutput(
+		                             outputId =ns("plot2"),
+		                             height = "750px" )
 		                  ),
 		                  tabPanel(title= "Table", 
 		                           downloadButton(outputId =  ns("downloadprecleaned"),
@@ -115,7 +102,7 @@ mod_error_report_ui <- function(id) {
 		    )
 		  )
 		)
-	)
+	
 }
  
 #' Module Server

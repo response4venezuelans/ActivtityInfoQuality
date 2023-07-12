@@ -15,7 +15,123 @@ pkgload::load_all(export_all = FALSE)
 ```
 
  
+
+
+# fct_read_lookup
+    
+```{r function-fct_read_lookup}
+#' fct_read_lookup
+#' 
+#' Pull Data From ActivityInfo
+#' 
+#' Note that this function is specific to a specific DB schema -
+#' the form to query as well as the columns variable name are hard coded and 
+#' would need to be adjusted if the DB change
+#' 
+#' Note also that the function is based on a token stored as an environment 
+#' variable
+#' 
+#'  # Credentials set up as environment variables - 
+#'  
+#'  # token <- "activityinfotoken.."
+#'  # print(Sys.setenv(ACTIVITYINFOTOKEN = token))   
+#'  # Sys.getenv("ACTIVITYINFOTOKEN")
+#'  # rm(token)
+#'  
+#'  @param type of one 
+#'                * dfadmin1  
+#'                * dfadmin2  
+#'                * dfindicator   
+#'                * dfpartner  
+#' 
+#' @return frame with the content of the activity info DB 
+#' 
+#' 
+#' @importFrom activityinfo activityInfoToken queryTable
+#' @importFrom dplyr  arrange mutate_at rowwise ungroup
+#' 
+#' @export
+fct_read_lookup <- function(type ){
+
+  activityinfo::activityInfoToken(Sys.getenv("ACTIVITYINFOTOKEN"),
+                                prompt = FALSE)
+
+  # Not recommended but if needed, chose to write the 5W as a xlsx file in repository
+  # Get other reference table used during the data quality check
+  # Loaded from AI regardless the method for 5W used
+  if( type == "admin1") {
+  lookup  <- activityinfo::queryTable(
+    form= "ctfe4etlct8v92h2s2z",
+                           "Country" = "c8u26b8kxeqpy0k4",
+                           "Admin1" = "c3ns3zikxeqq4h95",
+                           "ISOCode" = "cl3sspjkxeqq8yq6",
+    truncateStrings = FALSE) |> 
+    dplyr::rowwise() |> 
+    dplyr::mutate(countryadmin1 = paste(Country, Admin1)) |> 
+    dplyr::ungroup()
+  }
   
+  if( type == "admin2") {
+  lookup <- activityinfo::queryTable(
+    form= "cxl7zn3lct8v92h2s32",
+                         "Country" = "cnkb6jykxgdeemm4r.c8u26b8kxeqpy0k4",
+                         "Admin1" = "cnkb6jykxgdeemm4r.c3ns3zikxeqq4h95",
+                         "Admin2" = "cs2esadkx6hkt7j6", 
+    truncateStrings = FALSE) |> 
+    dplyr::rowwise() |> 
+    dplyr::mutate(admin1and2 = paste(Admin1, Admin2)) |> 
+    dplyr::ungroup()
+  }
+  
+  if( type == "indicator") {
+  lookup  <- activityinfo::queryTable(
+    form= "cbumi0ulctcno232",
+                              "CODE" = "cdhugiblctco28h3",
+                              "Subsector" = "cagw22hlctcp2vu5",
+                              "Indicator" = "c1oo0eclctcqtjp8",
+                              "IndicatorType" = "cuskmf7lctcszoga", 
+    truncateStrings = FALSE) |> 
+    dplyr::rowwise() |> 
+    dplyr::mutate(sectindic = paste(Subsector, Indicator)) |> 
+    dplyr::ungroup()
+  }
+  
+  if( type == "partner") {
+  lookup <- activityinfo::queryTable(
+    form= "cvbei1nlct8v92h2s31",
+                          "AOIDORG" = "cnhvpo4kumvyqla8",
+                          "Name" = "ckj5zamkumvyysv9",
+                          "Type" = "c813krekumw0449j",
+                          "RMlead" = "cu2zbr0l1z3adte7", 
+                          truncateStrings = FALSE)
+  
+  }
+
+   return(lookup)
+    
+}
+```
+  
+```{r example-fct_read_lookup}
+lookup_dfadmin1 <- fct_read_lookup(type = "admin1")
+head(lookup_dfadmin1, 10)
+
+lookup_dfadmin2 <- fct_read_lookup(type = "admin2")
+head(lookup_dfadmin2, 10)
+
+lookup_dfindicator <- fct_read_lookup(type = "indicator")
+head(lookup_dfindicator, 10)
+
+lookup_dfpartner <- fct_read_lookup(type = "partner")
+head(lookup_dfpartner, 10)
+
+```
+  
+```{r tests-fct_read_lookup}
+test_that("fct_read_lookup works", {
+  expect_true(inherits(fct_read_lookup, "function")) 
+})
+```  
 
 
 # fct_read_data
@@ -38,33 +154,27 @@ pkgload::load_all(export_all = FALSE)
 #'  # print(Sys.setenv(ACTIVITYINFOTOKEN = token))   
 #'  # Sys.getenv("ACTIVITYINFOTOKEN")
 #'  # rm(token)
+#'  
+#' @param filter what to filter on (country or partner) so that we do not need to load everything
+#' @param value value to filter from
 #' 
-#' @return list with the content of the activity info DB 
-#'                * df5W 
-#'                * dfadmin1  
-#'                * dfadmin2  
-#'                * dfindicator   
-#'                * dfpartner  
+#' @return  df5W  response tracking potentially filtered
 #' 
 #' 
 #' @importFrom activityinfo activityInfoToken queryTable
 #' @importFrom dplyr  arrange mutate_at rowwise ungroup
-#' @import devtools
-#' @import tidyverse
-#' @import shinyjs
-#' @import shinyWidgets
-#' @import shinydashboardPlus
-#' @import shinydashboardPlus
 #' 
 #' @export
-fct_read_data <- function( ){
+fct_read_data <- function(filter = NULL ,
+                          value = NULL){
 
   activityinfo::activityInfoToken(Sys.getenv("ACTIVITYINFOTOKEN"),
                                 prompt = FALSE)
 
-# Get data from different sources
-
-    df5W <-  activityinfo::queryTable("cm2ansilct8v92h2s37",
+    # Get data from different sources
+    if( all(!(is.null(filter)) & filter == "country") ) {
+    df5W <-  activityinfo::queryTable(
+      form ="cm2ansilct8v92h2s37",
                         "Country" = "cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4",
                         "Country Admin1" = "cezj1rqkxeqrsy57.c3ns3zikxeqq4h95",
                         "Admin2" = "c89klrbkx6hp4j58.cs2esadkx6hkt7j6",
@@ -94,7 +204,76 @@ fct_read_data <- function( ){
                         "Men above 18" = "ctd27ackx6l7g814v",
                         "Other under 18" = "ckjcuiokx6l9a504w",
                         "Other above 18" = "cq4hs3skx6lggpj4x",
-                        truncateStrings = FALSE)
+       filter = sprintf('cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4 == "%s" ', value),
+       truncateStrings = FALSE)
+      } else  if(  all(!(is.null(filter)) &  filter == "partner") ) {
+       df5W <-  activityinfo::queryTable(
+              form ="cm2ansilct8v92h2s37",
+                        "Country" = "cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4",
+                        "Country Admin1" = "cezj1rqkxeqrsy57.c3ns3zikxeqq4h95",
+                        "Admin2" = "c89klrbkx6hp4j58.cs2esadkx6hkt7j6",
+                        "Appealing organisation Name" = "c5648gjkx69ra2v9.ckj5zamkumvyysv9",
+                        "Implementation Set up" = "ckjtet4kx69smeog",
+                        "Implementing partner Name" = "cdocy6flctaah8c4.ckj5zamkumvyysv9",
+                        "Month" = "clqgqrqkyueahma8",
+                        "Indicator Sector" = "cco8s7klctg5i192q.cagw22hlctcp2vu5",
+                        "Indicator" = "cco8s7klctg5i192q.c1oo0eclctcqtjp8",
+                        "Activity Name" = "c3p669wkx6a7oyo4",
+                        "Activity Description" = "c8hxf50kx6a7vp65",
+                        "RMRP Activity" = "cuf3og8kx6amylmf",
+                        "CVA" = "cbvqg4jkx6b1kii7",
+                        "Value (in USD)" = "clwkfmckx6b2msu9",
+                        "Delivery mechanism" = "cg3rikqkx6b3z1kf",
+                        "Quantity of output" = "cm6no26kx6b8fqoh",
+                        "Total monthly beneficiaries" = "cto1biukx6kwvnj4k",
+                        "New beneficiaries of the month" = "c43j49ikx6kxyyc4l",
+                        "Refugees and Migrants IN DESTINATION" = "cz3yof2kx6l024p4m",
+                        "Refugees and Migrants IN TRANSIT" = "c8kl5o2kx6l0jip4n",
+                        "Host Communities Beneficiaries" = "c5z8bvakx6l10d84o",
+                        "Refugees and Migrants PENDULARS" = "c72dmskkx6l1hl04p",
+                        "Colombian Returnees" = "cmoqhuckx6l4q9z4q",
+                        "Women under 18" = "cwrxeaekx6l63na4s",
+                        "Men under 18" = "ccx7xhekx6l6jnk4t",
+                        "Women above 18" = "c3l36n2kx6l70kp4u",
+                        "Men above 18" = "ctd27ackx6l7g814v",
+                        "Other under 18" = "ckjcuiokx6l9a504w",
+                        "Other above 18" = "cq4hs3skx6lggpj4x",
+       filter = sprintf('c5648gjkx69ra2v9.ckj5zamkumvyysv9 == "%s" ', value),
+       truncateStrings = FALSE)
+      } else  {
+      df5W <-  activityinfo::queryTable(
+         form ="cm2ansilct8v92h2s37",
+                        "Country" = "cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4",
+                        "Country Admin1" = "cezj1rqkxeqrsy57.c3ns3zikxeqq4h95",
+                        "Admin2" = "c89klrbkx6hp4j58.cs2esadkx6hkt7j6",
+                        "Appealing organisation Name" = "c5648gjkx69ra2v9.ckj5zamkumvyysv9",
+                        "Implementation Set up" = "ckjtet4kx69smeog",
+                        "Implementing partner Name" = "cdocy6flctaah8c4.ckj5zamkumvyysv9",
+                        "Month" = "clqgqrqkyueahma8",
+                        "Indicator Sector" = "cco8s7klctg5i192q.cagw22hlctcp2vu5",
+                        "Indicator" = "cco8s7klctg5i192q.c1oo0eclctcqtjp8",
+                        "Activity Name" = "c3p669wkx6a7oyo4",
+                        "Activity Description" = "c8hxf50kx6a7vp65",
+                        "RMRP Activity" = "cuf3og8kx6amylmf",
+                        "CVA" = "cbvqg4jkx6b1kii7",
+                        "Value (in USD)" = "clwkfmckx6b2msu9",
+                        "Delivery mechanism" = "cg3rikqkx6b3z1kf",
+                        "Quantity of output" = "cm6no26kx6b8fqoh",
+                        "Total monthly beneficiaries" = "cto1biukx6kwvnj4k",
+                        "New beneficiaries of the month" = "c43j49ikx6kxyyc4l",
+                        "Refugees and Migrants IN DESTINATION" = "cz3yof2kx6l024p4m",
+                        "Refugees and Migrants IN TRANSIT" = "c8kl5o2kx6l0jip4n",
+                        "Host Communities Beneficiaries" = "c5z8bvakx6l10d84o",
+                        "Refugees and Migrants PENDULARS" = "c72dmskkx6l1hl04p",
+                        "Colombian Returnees" = "cmoqhuckx6l4q9z4q",
+                        "Women under 18" = "cwrxeaekx6l63na4s",
+                        "Men under 18" = "ccx7xhekx6l6jnk4t",
+                        "Women above 18" = "c3l36n2kx6l70kp4u",
+                        "Men above 18" = "ctd27ackx6l7g814v",
+                        "Other under 18" = "ckjcuiokx6l9a504w",
+                        "Other above 18" = "cq4hs3skx6lggpj4x",
+      truncateStrings = FALSE)
+      }
 
  # format column names for easier data processing
   
@@ -129,7 +308,7 @@ fct_read_data <- function( ){
                       "Other_above")
   
   # Short data wrangling for integer values
-  df5W <<- df5W |>
+  df5W <- df5W |>
     dplyr::mutate_at(c("Value",
                 "Quantity_output",
                 "Total_monthly",
@@ -147,53 +326,9 @@ fct_read_data <- function( ){
                 "Other_above"), as.numeric) |>
     dplyr::arrange(Country, Month)
 
-  # Not recommended but if needed, chose to write the 5W as a xlsx file in repository
-  # Get other reference table used during the data quality check
-  # Loaded from AI regardless the method for 5W used
+ 
   
-  dfadmin1  <<- activityinfo::queryTable("ctfe4etlct8v92h2s2z",
-                           "Country" = "c8u26b8kxeqpy0k4",
-                           "Admin1" = "c3ns3zikxeqq4h95",
-                           "ISOCode" = "cl3sspjkxeqq8yq6",truncateStrings = FALSE) |> 
-    dplyr::rowwise() |> 
-    dplyr::mutate(countryadmin1 = paste(Country, Admin1)) |> 
-    dplyr::ungroup()
-  
-  
-  dfadmin2 <<- activityinfo::queryTable("cxl7zn3lct8v92h2s32",
-                         "Country" = "cnkb6jykxgdeemm4r.c8u26b8kxeqpy0k4",
-                         "Admin1" = "cnkb6jykxgdeemm4r.c3ns3zikxeqq4h95",
-                         "Admin2" = "cs2esadkx6hkt7j6", truncateStrings = FALSE) |> 
-    dplyr::rowwise() |> 
-    dplyr::mutate(admin1and2 = paste(Admin1, Admin2)) |> 
-    dplyr::ungroup()
-  
-  
-  
-  
-  dfindicator  <<- activityinfo::queryTable("cbumi0ulctcno232",
-                              "CODE" = "cdhugiblctco28h3",
-                              "Subsector" = "cagw22hlctcp2vu5",
-                              "Indicator" = "c1oo0eclctcqtjp8",
-                              "IndicatorType" = "cuskmf7lctcszoga", 
-                              truncateStrings = FALSE) |> 
-    dplyr::rowwise() |> 
-    dplyr::mutate(sectindic = paste(Subsector, Indicator)) |> 
-    dplyr::ungroup()
-  
-  
-  dfpartner <<- activityinfo::queryTable("cvbei1nlct8v92h2s31",
-                          "AOIDORG" = "cnhvpo4kumvyqla8",
-                          "Name" = "ckj5zamkumvyysv9",
-                          "Type" = "c813krekumw0449j",
-                          "RMlead" = "cu2zbr0l1z3adte7", 
-                          truncateStrings = FALSE)
-  
-  result <- list( df5W = df5W,
-                  dfadmin1  = dfadmin1 ,
-                  dfadmin2  = dfadmin2 ,
-                  dfindicator =dfindicator, 
-                  dfpartner = dfpartner )
+  result <-   df5W  
   
  return(result)
     
@@ -201,14 +336,20 @@ fct_read_data <- function( ){
 ```
   
 ```{r example-fct_read_data}
-result <- fct_read_data()
-## list of results
 
-head(result[["df5W"]], 10)
-head(result[["dfadmin1"]], 10)
-head(result[["dfadmin2"]], 10)
-head(result[["dfindicator"]], 10)
-head(result[["dfpartner"]], 10)
+## Pulling everything... can be long..
+df5W <- fct_read_data()
+head( df5W, 10)
+
+## testing the filters
+df5Wctr <- fct_read_data(filter = "country",
+                         value = "Colombia")
+head( df5Wctr, 10)
+
+df5Wpart <- fct_read_data(filter = "partner",
+                         value = "United Nations High Commissioner for Refugees (UNHCR)")
+head( df5Wpart , 10)
+
 ```
   
 ```{r tests-fct_read_data}
@@ -216,7 +357,8 @@ test_that("fct_read_data works", {
   expect_true(inherits(fct_read_data, "function")) 
 })
 ```
-  
+
+
 
 # fct_error_report
     
@@ -229,36 +371,37 @@ test_that("fct_read_data works", {
 #' 
 #'  __Completeness__:
 #' 
-#'  1.  missingcountry: Country information missing
-#'  2. countryadmincheck: Administrative unit level1 not matching 
-#'  3.  admin1and2check: Administrative unit level2 not matching 
-#'  4.  miss_appeal_org: Missing appealing organsation
-#'  5.  miss_setup:   Missing Implementation
-#'  6.  miss_implementing_org:   Missing name of implementer
-#'  7.  miss_month: Missing month
-#'  8.  missing_what,
+#'  1. missingcountry: Country and admin 1 information is missing.
+#'  2. countryadmincheck: Administrative unit level 1 not matching the name in the ActivityInfo 5W "admin2" reference table.
+#'  3.  admin1and2check: Administrative unit level 2 not matching the name for each respective admin1 in the ActivityInfo 5W "admin2" reference table. 
+#'  4.  miss_appeal_org: Missing appealing organization or organization name not corresponding to the name included in the ActivityInfo 5W "partners" reference table
+#'  5.  miss_setup: Checks if the field is empty, as it is mandatory to fill this variable with a "yes" for cases where there is an implementing partner, or with a "no" if the activity corresponds to direct implementation.
+#'  6.  miss_implementing_org: If "yes" is selected in the "implementation set up" field, then a name for the implementing organization should be included in the corresponding field, otherwise it will retrieve an error.
+#'  7.  miss_month: Missing month information.
+#'  8.  missing_what: If there is missing information for the 5W "what" fields, more specifically: indicator sector, indicator, activity name, RMRP activity, and CVA.
 #'   
 #'  __Consistency__:
-#'  9.  wrongsectindicator, 
-#'  10.  zeroCVA, 
-#'  11.  missingmechanism, 
-#'  12.  CVANotoYes,         
-#'  13.  MultipurposeSector, 
-#'  14.  DirectAssistanceNoBenef, 
-#'  15.  NewBenefvstotal, 
+#'  9.  wrongsectindicator: If the indicator name does not correspond to the selected sector, as per the ActivityInfo 5W "indicators RMRP 23" reference table. 
+#'  10.  zeroCVA: when the CVA field is "yes", then a CVA value in USD must be entered, otherwise it will retrieve an error.
+#'  11.  missingmechanism: when the CVA field is "yes", then a CVA delivery mechanism must be entered, otherwise it will retrieve an error.
+#'  12.  CVANotoYes: If the CVA = “No” but that the Value or Delivery Mechanism contains data, it will retrieve an error as those should be empty or the CVA should be “Yes”.          
+#'  13.  MultipurposeSector: It will retrieve an error when the selected indicator sector is "Multipurpose Cash Assistance (MPC)" and CVA = "No". 
+#'  14.  DirectAssistanceNoBenef: If the indicator type selected is "Direct Assistance" then there should be positive values entered for new monthly beneficiaries and total beneficiaries, otherwise it will retrieve an error.  
+#'  15.  NewBenefvstotal: if the value for new monthly beneficiaries exceeds the value of total monthly beneficiaries. 
 #'  
 #'  __Accuracy__:
-#'  16.  PopTypeBreakdown, 
-#'  17.  AGDBreakdown, 
-#'  18.  CBuildingNoBenef, 
-#'  19.  NoOutput
+#'  16.  PopTypeBreakdown:  For "Direct Assistance" indicators, checks if the sum of the population type breakdown equals the new beneficiaries value. If an ERROR appears, please review the breakdown values or the new beneficiaries' values in the corresponding activity
+#'  17.  AGDBreakdown: For "Direct Assistance" indicators, checks if the sum of the age and gender breakdown equals the new beneficiaries' value. If an ERROR appears, please review the breakdown values or the new beneficiaries' values in the corresponding activity
+#'  18.  CBuildingNoBenef: For "Capacity Building" indicators, checks if there is positive values for the total monthly beneficiaries field, as this field should be reported, otherwise it will retrieve an error.
+#'  19.  NoOutput: For indicators other than the ones included under "Direct Assistance" and "Capacity Building", a value for"Quantity of Output" should always be reported, otherwise it will retrieve an error.
 #' 
-#' @param result output of the previous function fct_read_data()
-#' @param countryname  name of the country to filter the report
-#'                     can be set to "All" - or any of  "Aruba", "Curaçao",
-#'                      "Costa Rica", "Dominican Republic",
-#'                      "Trinidad and Tobago", "Guyana", 
-#'                                   "Mexico", "Panama"
+#' 
+#' @param df5W fame with response tracking data
+#' @param lookup_dfindicator fame with indicator look up 
+#' @param lookup_dfadmin1 fame with admin1 look up 
+#' @param lookup_dfadmin2 fame with admin2 look up 
+#' @param lookup_dfpartner fame with partner look up 
+#' 
 #' @import ggplot2 
 #' @importFrom scales label_number cut_short_scale
 #' @importFrom unhcrthemes theme_unhcr
@@ -270,38 +413,26 @@ test_that("fct_read_data works", {
 #' @return result list with results and data error...
 #' 
 #' @export
-fct_error_report <- function(result,
-                             countryname = NULL){
-  
-  ### extract frames...
-  df5W <- result[["df5W"]]
-  dfadmin1 <- result[["dfadmin1"]]
-  dfadmin2 <- result[["dfadmin2"]]
-  dfindicator <- result[["dfindicator"]]
-  dfpartner<- result[["dfpartner"]] 
+fct_error_report <- function(  df5W, 
+                               lookup_dfadmin1, 
+                               lookup_dfadmin2, 
+                               lookup_dfindicator, 
+                               lookup_dfpartner ){
   
   # Data wrangling of reference table for quality check
   # Vectors for verification
-  partnerlist <- unique(as.vector(dfpartner["Name"]))
-  countrylist <- unique(as.vector(dfadmin1["countryadmin1"]))
-  admin2list <- unique(as.vector(dfadmin2["admin1and2"]))
-  sectindiclist <-  as.vector(dfindicator["sectindic"])
+  partnerlist <- unique(as.vector(lookup_dfpartner["Name"]))
+  countrylist <- unique(as.vector(lookup_dfadmin1["countryadmin1"]))
+  admin2list <- unique(as.vector(lookup_dfadmin2["admin1and2"]))
+  sectindiclist <-  as.vector(lookup_dfindicator["sectindic"])
   
-  ### Filter the country if needed
-  if (is.null(countryname) || (countryname=="All")) {
-      df5Werror <- df5W   
-    } else {
-      df5Werror <- df5W  |> 
-        dplyr::filter(Country == countryname)    
-    }
-
   # concatenate relevant columns to then check if cascading values are matching, 
-  df5Werror <- df5Werror  |>
+  df5Werror <- df5W  |>
     dplyr::mutate(
       countryadmin1 = paste(Country, Admin1),
       Admin1and2 = paste(Admin1, Admin2),
       sectorindicator = paste(Subsector, Indicator)) |>
-    dplyr::left_join(dfindicator, by = c("Subsector", "Indicator")) |>
+    dplyr::left_join(lookup_dfindicator, by = c("Subsector", "Indicator")) |>
     dplyr::select(-CODE, -sectindic)
     
   # Data Quality Check #############
@@ -374,7 +505,7 @@ fct_error_report <- function(result,
    # table( df5Werror$Review, useNA = "ifany")
    #table( df5Werror$Review2, useNA = "ifany")
    ## Add to result
-   result$ErrorReportclean <- df5Werror
+  
  
   ## Add summary plot 
    
@@ -427,7 +558,6 @@ fct_error_report <- function(result,
                      # axis_text = "y"
                     )
   
-   result$plot_Appealing <- plot_Appealing
   
    ## Second plot 
   plot_Country <-  df5Werror |>
@@ -457,8 +587,10 @@ fct_error_report <- function(result,
                      # legend = FALSE,
                      # axis_text = "y"
                     )
-  
-  result$plot_Country <- plot_Country
+   result <- list (
+               ErrorReportclean = df5Werror, 
+               plot_Country = plot_Country,
+               plot_Appealing = plot_Appealing)
 
   return(result)
     
@@ -466,25 +598,35 @@ fct_error_report <- function(result,
 ```
   
 ```{r example-fct_error_report}
-## Get data
-result0 <- fct_read_data()
-## Fix errors
-result <- fct_error_report(result = result0,
-                             countryname = NULL)
- 
-## Use parameters
-result <- fct_error_report(result = result0,
-                           countryname ="All")
-## charts 
-print(result$plot_Country)
-result <- fct_error_report(result = result0,
-                           countryname ="Colombia")
+lookup_dfadmin1 <- fct_read_lookup(type = "admin1")
+lookup_dfadmin2 <- fct_read_lookup(type = "admin2")
+lookup_dfpartner <- fct_read_lookup(type = "partner")
 
-print(result$plot_Appealing)
-## Error
-head(result[["Error"]], 10)
+lookup_dfindicator <- fct_read_lookup(type = "indicator")
+
+df5Wpart <- fct_read_data(filter = "partner",
+    value = "United Nations High Commissioner for Refugees (UNHCR)")
+resultpart <- fct_error_report(df5Wpart, 
+                               lookup_dfadmin1, 
+                               lookup_dfadmin2, 
+                               lookup_dfindicator, 
+                               lookup_dfpartner)
+ 
+print(resultpart$plot_Country)
+
+## Second example
+df5Wctr <- fct_read_data(filter = "country",
+                         value = "Peru")
+resultctr <- fct_error_report(df5Wctr, 
+                               lookup_dfadmin1, 
+                               lookup_dfadmin2, 
+                               lookup_dfindicator, 
+                               lookup_dfpartner)
+
+print(resultctr$plot_Appealing) 
+
 ## Display fixed data 
-head(result[["ErrorReportclean"]], 10)
+head(resultctr[["ErrorReportclean"]], 10)
 
 
 ```
@@ -502,14 +644,8 @@ test_that("fct_error_report works", {
 #' 
 #' Function to aggregate data according to different scenario
 #' 
-
-#' @param result output of the previous function fct_read_data() 
-#'                   and fct_error_report()
-#' @param countryname  name of the country to filter the report
-#'                     can be set to "All" - or any of  "Aruba", "Curaçao",
-#'                      "Costa Rica", "Dominican Republic",
-#'                      "Trinidad and Tobago", "Guyana", 
-#'                                   "Mexico", "Panama"
+#' @param df5W fame with response tracking data
+#' @param lookup_dfindicator fame with indicator look up 
 #' @param proportions  can be "pin" or "target" - this uses configuration available 
 #'                      within the spreadsheet inst/Proportions.xlsx
 #' @param totalmodel   can be either: 
@@ -517,12 +653,12 @@ test_that("fct_error_report works", {
 #'                      intersector figures per admin1 level and then at national level
 #'                     
 #'                     *  "maxsector" : sums all beneficiaries at sector and admin1
-#'                       level, then takethe max of each age and gender categories
+#'                       level, then take the max of each age and gender categories
 #'                        for each population type to get the intersector figure 
 #'                      
 #'                     *  "southernconemodel" : Mixed approach in 3 steps: 
 #'                     
-#'                     1.Max across Shelter, Food security, Humanitarian transport
+#'                     1. Max across Shelter, Food security, Humanitarian transport
 #'                         and WASH 
 #'                         
 #'                     2. Take Protection (General) data  
@@ -539,39 +675,21 @@ test_that("fct_error_report works", {
 #' @return list with results
 #' 
 #' @export
-fct_aggregate_data <- function(result,
-                             countryname = NULL, 
+fct_aggregate_data <- function(df5W,
+                               lookup_dfindicator,
                              proportions = "pin", 
                              totalmodel = "sum"){
   
-   ### extract frames...
-  df5W <- result[["df5W"]]
-  dfadmin1 <- result[["dfadmin1"]]
-  dfadmin2 <- result[["dfadmin2"]]
-  dfindicator <- result[["dfindicator"]]
-  dfpartner<- result[["dfpartner"]] 
-  ErrorReportclean <- result[["ErrorReportclean"]]
-  
   # Filter by the needed country and PiN indicators only
 
-  if (is.null(countryname) || (countryname=="All")) {
-    df5Wconsolidated <<- df5W  |> 
-      dplyr::left_join(dfindicator, by = c("Subsector", "Indicator")) |> 
-      dplyr::select(-CODE, -sectindic) |> 
-      dplyr::filter(IndicatorType == "Direct Assistance" ) |> 
-      dplyr::mutate_if(is.numeric, 
-                       tidyr::replace_na, 
-                       replace = 0)
-  } else {
-    df5Wconsolidated <<- df5W  |>  
-      dplyr::filter(Country == countryname) |> 
-      dplyr::left_join(dfindicator, by = c("Subsector", "Indicator")) |> 
+  df5Wconsolidated <- df5W  |>  
+      dplyr::left_join(lookup_dfindicator, by = c("Subsector", "Indicator")) |> 
       dplyr::select(-CODE, -sectindic) |> 
       dplyr::filter(IndicatorType == "Direct Assistance") |> 
-    dplyr::mutate_if(is.numeric, 
+      dplyr::mutate_if(is.numeric, 
                        tidyr::replace_na, 
                         replace = 0)  
-  }
+ 
  
   # Create a vector based on Activity's months to the filter the template
     monthlist <- tibble::as_tibble(unique(df5Wconsolidated["Month"]))
@@ -582,14 +700,9 @@ fct_aggregate_data <- function(result,
                                                 package = "ActivtityInfoQuality") )
 
 
-  if (is.null(countryname) || (countryname=="All")) {
+
     dftemplate <- dftemplate |> 
       dplyr::semi_join(monthlist, by = "Month")
-  } else {
-    dftemplate <- dftemplate |> 
-      dplyr::filter(Country == countryname) |> 
-      dplyr::semi_join(monthlist, by = "Month")
-  }
 
   # Get proportions file for each sector in Admin1 and poptype categories
   if (proportions == "pin")  {
@@ -605,7 +718,7 @@ fct_aggregate_data <- function(result,
   }
 
 
-#################### 1. Total Monthly figures #################################################################
+#################### 1. Total Monthly figures ###########
 
 # Get monthly total figures of persons per Admin1 per sector
 # sum Total beneficiaries of every activities 
@@ -651,7 +764,7 @@ finalmonthcountry <- finalmonthlyadm1  |>
 
 finalmonthlytotal <- rbind(finalmonthlyadm1, finalmonthcountry)
 
-#################### 2. Consolidated figures #################################################################
+#################### 2. Consolidated figures ##############################
 
 ###### 2.1 Sector level ################
 # Figures at sector and admin1 level are solely calculated through a sum
@@ -1013,19 +1126,19 @@ if (totalmodel == "maxsector")
      dplyr::full_join(finalmonthlytotal, by = c("Country", "Admin1", "Month", "Subsector"))
 
   # For countries with no admin1, filter out to only keep the "Country level" data
-  countrynoadmin1 <- c("Aruba", "Cura\u00e7ao", "Costa Rica", "Dominican Republic",
-                       "Trinidad and Tobago", "Guyana", 
-                     "Mexico", "Panama")
-
-    if( is.null(countryname) ) {
-      consfullmodel <- consfullmodel
-    } else  {
-      if (     countryname %in% countrynoadmin1){
-      consfullmodel <- consfullmodel |> 
-        dplyr::filter(Admin1 == "Country level") 
-      } else { 
-      consfullmodel <- consfullmodel}
-     }
+  # countrynoadmin1 <- c("Aruba", "Cura\u00e7ao", "Costa Rica", "Dominican Republic",
+  #                      "Trinidad and Tobago", "Guyana", 
+  #                    "Mexico", "Panama")
+  # 
+  #   if( is.null(countryname) ) {
+  #     consfullmodel <- consfullmodel
+  #   } else  {
+  #     if (     countryname %in% countrynoadmin1){
+  #     consfullmodel <- consfullmodel |> 
+  #       dplyr::filter(Admin1 == "Country level") 
+  #     } else { 
+  #     consfullmodel <- consfullmodel}
+  #    }
 
   # Merge with template
    consolidated_report <- dftemplate  |> 
@@ -1096,77 +1209,75 @@ if (totalmodel == "maxsector")
             `Check AGD Breakdown`,
             `Check CVA higher Total`)
             
-   result$ConsolidatedReport <- FinalConsolidated
-   return(result)
+   return(FinalConsolidated)
     
 }
 ```
   
 ```{r example-fct_aggregate_data}
 
-result <- fct_read_data()
-## Fix errors
-result2 <- fct_error_report(result)
+lookup_dfindicator <- fct_read_lookup(type = "indicator")
+df5W <- fct_read_data() 
 
 ## Check all 6 combinations...
 
 ### Combination 1
-resultpinsum <- fct_aggregate_data(result = result2,
-                             countryname = NULL, 
+resultpinsum <- fct_aggregate_data(df5W,
+                             lookup_dfindicator, 
                              proportions = "pin",  
                              totalmodel = "sum"   
 )
 
-head(resultpinsum[["ConsolidatedReport"]], 10)
+head(resultpinsum, 10)
 
 ### Combination 2
-resulttargetsum <- fct_aggregate_data(result2,
-                             countryname = NULL, 
+resulttargetsum <- fct_aggregate_data(df5W,
+                             lookup_dfindicator,
                              proportions = "target",  
                              totalmodel = "sum"   
 )
 
-head(resulttargetsum[["ConsolidatedReport"]], 10)
+head(resulttargetsum, 10)
 
 
 ### Combination 3
-resultpinmaxsector <- fct_aggregate_data(result2,
-                             countryname = NULL, 
+resultpinmaxsector <- fct_aggregate_data(df5W,
+                             lookup_dfindicator,
                              proportions = "pin",  
                              totalmodel = "maxsector"   
 )
 
-head(resultpinmaxsector[["ConsolidatedReport"]], 10)
+head(resultpinmaxsector, 10)
 
 
 ### Combination 4
-resulttargetmaxsector<- fct_aggregate_data(result2,
-                             countryname = NULL, 
+resulttargetmaxsector<- fct_aggregate_data(df5W,
+                             lookup_dfindicator,
                              proportions = "target",  
                              totalmodel = "maxsector"   
 )
 
-head(resulttargetmaxsector[["ConsolidatedReport"]], 10)
+head(resulttargetmaxsector, 10)
 
 
 ### Combination 5
-resultpinsouthernconemodel <- fct_aggregate_data(result2,
-                             countryname = NULL, 
+resultpinsouthernconemodel <- fct_aggregate_data(df5W,
+                             lookup_dfindicator,
                              proportions = "pin",  
                              totalmodel = "southernconemodel"   
 )
 
-head(resultpinsouthernconemodel[["ConsolidatedReport"]], 10)
+head(resultpinsouthernconemodel, 10)
 
 
 ### Combination 6
-resulttargetsouthernconemodel <- fct_aggregate_data(result2,
-                             countryname = NULL, 
+resulttargetsouthernconemodel <- fct_aggregate_data(df5W,
+                             lookup_dfindicator,
                              proportions = "target", 
                              totalmodel = "southernconemodel"   
 )
 
-head(resulttargetsouthernconemodel[["ConsolidatedReport"]], 10)
+head(resulttargetsouthernconemodel, 10)
 
 
 
@@ -1180,6 +1291,74 @@ test_that("fct_aggregate_data works", {
 ```
   
   
+
+# run_app
+
+
+<!--
+Create a chunk for the core of the function
+
+- The chunk needs to be named `function` at least
+- It contains the code of a documented function
+- The chunk can also be named `function-my_function` to make it easily
+findable in your Rmd
+- Let the `@examples` part empty, and use the next `examples` chunk instead to present reproducible examples
+
+After inflating the template
+
+-  This function code will automatically be added in a new file in the "R/" directory
+-->
+    
+```{r function-run_app}
+#' Run the Shiny Application
+#'
+#' @param ... arguments to pass to golem_opts.
+#' See `?golem::get_golem_options` for more details.
+#' @inheritParams shiny::shinyApp
+#'
+#' @export
+#' @importFrom shiny shinyApp
+#' @importFrom golem with_golem_options
+#
+run_app <- function(
+    onStart = NULL,
+    options = list(),
+    enableBookmarking = NULL,
+    uiPattern = "/",
+    ...
+) {
+  with_golem_options(
+    app = shinyApp(
+      ui = app_ui,
+      server = app_server,
+      onStart = onStart,
+      options = options,
+      enableBookmarking = enableBookmarking,
+      uiPattern = uiPattern
+    ),
+    golem_opts = list(...)
+  )
+}
+
+```
+
+<!--
+Create a chunk with an example of use for your function
+
+- The chunk needs to be named `examples` at least
+- It contains working examples of your function
+- The chunk is better be named `examples-my_median` to be handled
+correctly when inflated as a vignette
+
+After inflating the template
+
+-  This example will automatically be added in the '@examples' part of our function above in the "R/" directory
+- This example will automatically be added in the vignette created from this Rmd template
+-->
+
+```{r example-run_app}
+# run_app()
+```
 
 
 

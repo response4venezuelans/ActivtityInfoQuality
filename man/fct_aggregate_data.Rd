@@ -5,21 +5,16 @@
 \title{fct_aggregate_data}
 \usage{
 fct_aggregate_data(
-  result,
-  countryname = NULL,
+  df5W,
+  lookup_dfindicator,
   proportions = "pin",
   totalmodel = "sum"
 )
 }
 \arguments{
-\item{result}{output of the previous function fct_read_data() 
-and fct_error_report()}
+\item{df5W}{fame with response tracking data}
 
-\item{countryname}{name of the country to filter the report
-can be set to "All" - or any of  "Aruba", "Curaçao",
- "Costa Rica", "Dominican Republic",
- "Trinidad and Tobago", "Guyana", 
-              "Mexico", "Panama"}
+\item{lookup_dfindicator}{fame with indicator look up}
 
 \item{proportions}{can be "pin" or "target" - this uses configuration available 
 within the spreadsheet inst/Proportions.xlsx}
@@ -29,12 +24,12 @@ within the spreadsheet inst/Proportions.xlsx}
  intersector figures per admin1 level and then at national level
 
 *  "maxsector" : sums all beneficiaries at sector and admin1
-  level, then takethe max of each age and gender categories
+  level, then take the max of each age and gender categories
    for each population type to get the intersector figure 
  
 *  "southernconemodel" : Mixed approach in 3 steps: 
 
-1.Max across Shelter, Food security, Humanitarian transport
+1. Max across Shelter, Food security, Humanitarian transport
     and WASH 
     
 2. Take Protection (General) data  
@@ -50,69 +45,68 @@ Function to aggregate data according to different scenario
 }
 \examples{
 
-result <- fct_read_data()
-## Fix errors
-result2 <- fct_error_report(result)
+lookup_dfindicator <- fct_read_lookup(type = "indicator")
+df5W <- fct_read_data() 
 
 ## Check all 6 combinations...
 
 ### Combination 1
-resultpinsum <- fct_aggregate_data(result = result2,
-                             countryname = NULL, 
+resultpinsum <- fct_aggregate_data(df5W,
+                             lookup_dfindicator, 
                              proportions = "pin",  
                              totalmodel = "sum"   
 )
 
-head(resultpinsum[["ConsolidatedReport"]], 10)
+head(resultpinsum, 10)
 
 ### Combination 2
-resulttargetsum <- fct_aggregate_data(result2,
-                             countryname = NULL, 
+resulttargetsum <- fct_aggregate_data(df5W,
+                             lookup_dfindicator,
                              proportions = "target",  
                              totalmodel = "sum"   
 )
 
-head(resulttargetsum[["ConsolidatedReport"]], 10)
+head(resulttargetsum, 10)
 
 
 ### Combination 3
-resultpinmaxsector <- fct_aggregate_data(result2,
-                             countryname = NULL, 
+resultpinmaxsector <- fct_aggregate_data(df5W,
+                             lookup_dfindicator,
                              proportions = "pin",  
                              totalmodel = "maxsector"   
 )
 
-head(resultpinmaxsector[["ConsolidatedReport"]], 10)
+head(resultpinmaxsector, 10)
 
 
 ### Combination 4
-resulttargetmaxsector<- fct_aggregate_data(result2,
-                             countryname = NULL, 
+resulttargetmaxsector<- fct_aggregate_data(df5W,
+                             lookup_dfindicator,
                              proportions = "target",  
                              totalmodel = "maxsector"   
 )
 
-head(resulttargetmaxsector[["ConsolidatedReport"]], 10)
+head(resulttargetmaxsector, 10)
 
 
 ### Combination 5
-resultpinsouthernconemodel <- fct_aggregate_data(result2,
-                             countryname = NULL, 
+resultpinsouthernconemodel <- fct_aggregate_data(df5W,
+                             lookup_dfindicator,
                              proportions = "pin",  
                              totalmodel = "southernconemodel"   
 )
 
-head(resultpinsouthernconemodel[["ConsolidatedReport"]], 10)
+head(resultpinsouthernconemodel, 10)
 
 
 ### Combination 6
-resulttargetsouthernconemodel <- fct_aggregate_data(result2,
-                             countryname = NULL, 
+resulttargetsouthernconemodel <- fct_aggregate_data(df5W,
+                             lookup_dfindicator,
                              proportions = "target", 
                              totalmodel = "southernconemodel"   
 )
 
-head(resulttargetsouthernconemodel[["ConsolidatedReport"]], 10)
+head(resulttargetsouthernconemodel, 10)
 
 
 

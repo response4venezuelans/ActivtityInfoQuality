@@ -27,18 +27,18 @@ mod_aggregate_data_ui <- function(id) {
 		      fluidRow(
 		        column(
 		          width = 4,
-  		       selectInput(
-  		          inputId = ns("country_name_agg"),
-  		          label = "Filter Country ",
-  		          choices = c("NULL"))
-  		      ),
-		        column(
-		          width = 4,
 		          radioButtons(
     		        inline = TRUE,
     		        inputId = ns("totalmodel_agg"),
     		        label = "Define Aggregation Model",
     		        choices = c("sum", "maxsector", "southernconemodel"))
+		        ),
+		        column(
+		          width = 4,
+		          selectInput(
+		            inputId = ns("country_name_agg"),
+		            label = "Filter Country ",
+		            choices = c("NULL"))
 		        ),
 		        column(
 		          width = 4,
