@@ -56,37 +56,6 @@ A series of errors are checked by the Data Quality check report. They can be div
  * __Accuracy__: Incorrect or empty breakdown information
 
 
-### Automatic Cleaning
-
-Automatic cleanings can be grouped in various categories:
-
- * Automatic Yes or No for missing values  
- 
- * Automatic assignment of values between Quantity and beneficiary when erroneous  
- 
- * Automatic apportioning for empty fields  
- 
- * Automatic apportioning when discrepancies (overwrites values and need to be used with care)  
- 
- * Erase of extra data 
-
-### Limitations in the cleaning 
-
- * Remaining mistakes that cannot be self-cleaned: 
- 
- * Missing categorical values that cannot be automatically assigned
- 
- * Activities with empty values:    
- 
- * Apportioning of Age and Gender breakdown for People indicators
- 
- 
-### Review for the cleaning 
-
- * Review apportioning document by country and sector and possibility of more accurate breakdowns (by Admin1, by indicator,…)
- 
- * Resolve the empty values issues  
-
 ### Data Aggregation 
 
 Aggregation models differ from a country to another and thus it is important to register the model you are applying for us to understand how they are processed. 
@@ -106,8 +75,6 @@ It includes a shiny app (`run_app()`) together with a few functions
 ## Next Steps
 
  * Update the Aggregation model for every country
-
- * Agree on Age and Gender breakdowns proportions for each sector, for PiN and People indicators
 
  * Help the development of local scripts for analysis, outliers detections,…
 
