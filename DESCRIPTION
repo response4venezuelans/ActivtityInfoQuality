@@ -34,8 +34,8 @@ VignetteBuilder:
     knitr
 Remotes: 
     edouard-legoupil/unhcrshiny,
-    vidonne/unhcrthemes,
-    bedatadriven/activityinfo-R
+    vidonne/unhcrthemes
+Config/fusen/version: 0.5.1
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3

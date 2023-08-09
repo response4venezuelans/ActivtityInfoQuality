@@ -60,7 +60,11 @@ mod_read_data_ui <- function(id) {
                                  datamods::import_file_ui( id = ns("myid"), 
                                                            file_extensions = c( ".xlsx")),
                                  
-                                 verbatimTextOutput(outputId = ns("status"))
+                                 verbatimTextOutput(outputId = ns("status")),
+                                 actionButton(inputId = ns("local_data"),
+                                              label = "Analyze your data",
+                                              icon = icon("cloud-upload"),
+                                              width = "100%")
                         )
             )
           )
@@ -217,7 +221,7 @@ mod_read_data_server <- function(input, output, session, AppReactiveValue) {
     imported$status()
   })
     
-  observeEvent(input$confirm, {
+  observeEvent(input$local_data, {
   #observeEvent(input$container_confirm_btn , {
     # ## Precompile in the reactive value the rest of the app with default value..
     AppReactiveValue$error_report  <- fct_error_report(AppReactiveValue$df5W,

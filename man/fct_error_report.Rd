@@ -62,9 +62,9 @@ Currently this includes the 19 following Check:
 lookup_dfadmin1 <- fct_read_lookup(type = "admin1")
 lookup_dfadmin2 <- fct_read_lookup(type = "admin2")
 lookup_dfpartner <- fct_read_lookup(type = "partner")
-
 lookup_dfindicator <- fct_read_lookup(type = "indicator")
 
+## First example
 df5Wpart <- fct_read_data(filter = "partner",
     value = "United Nations High Commissioner for Refugees (UNHCR)")
 resultpart <- fct_error_report(df5Wpart, 
@@ -85,9 +85,17 @@ resultctr <- fct_error_report(df5Wctr,
                                lookup_dfpartner)
 
 print(resultctr$plot_Appealing) 
-
-## Display fixed data 
 head(resultctr[["ErrorReportclean"]], 10)
+
+
+## last example with offline data..
+df5Woffline <-  readxl::read_excel( system.file("Activities_5W_2023.xlsx", 
+                                                package = "ActivtityInfoQuality") )
+resultctr <- fct_error_report(df5Woffline, 
+                               lookup_dfadmin1, 
+                               lookup_dfadmin2, 
+                               lookup_dfindicator, 
+                               lookup_dfpartner)
 
 
 }
