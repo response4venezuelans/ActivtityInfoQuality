@@ -48,6 +48,13 @@ Function to aggregate data according to different scenario
 lookup_dfindicator <- fct_read_lookup(type = "indicator")
 df5W <- fct_read_data() 
 
+
+df5Wctr <- fct_read_data(filter = "country",
+                         value = "Bolivia")
+resultpinsum <- fct_aggregate_data(df5W = df5Wctr,
+                             lookup_dfindicator, 
+                             proportions = "pin",  
+                             totalmodel = "sum" )
 ## Check all 6 combinations...
 
 ### Combination 1

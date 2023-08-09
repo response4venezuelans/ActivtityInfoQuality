@@ -47,4 +47,7 @@ df5Wpart <- fct_read_data(filter = "partner",
                          value = "United Nations High Commissioner for Refugees (UNHCR)")
 head( df5Wpart , 10)
 
+df5Wpart2 <- fct_read_data(filter = "partner",
+                         value = "CCEFIRO Association")
+
 }
