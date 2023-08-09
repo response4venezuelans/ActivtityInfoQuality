@@ -204,6 +204,7 @@ fct_read_data <- function(filter = NULL ,
                         "Men" = "ctd27ackx6l7g814v",
                         "Other_under" = "ckjcuiokx6l9a504w",
                         "Other_above" = "cq4hs3skx6lggpj4x",
+                        "Platform" = "cuhb8obl0wjzz9r3",
        filter = sprintf('cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4 == "%s" ', value),
        truncateStrings = FALSE)
       } else  if(  all(!(is.null(filter)) &  filter == "partner") ) {
@@ -238,6 +239,7 @@ fct_read_data <- function(filter = NULL ,
                         "Men" = "ctd27ackx6l7g814v",
                         "Other_under" = "ckjcuiokx6l9a504w",
                         "Other_above" = "cq4hs3skx6lggpj4x",
+                        "Platform" = "cuhb8obl0wjzz9r3",
        filter = sprintf('c5648gjkx69ra2v9.ckj5zamkumvyysv9 == "%s" ', value),
        truncateStrings = FALSE)
       } else  {
@@ -272,6 +274,7 @@ fct_read_data <- function(filter = NULL ,
                         "Men" = "ctd27ackx6l7g814v",
                         "Other_under" = "ckjcuiokx6l9a504w",
                         "Other_above" = "cq4hs3skx6lggpj4x",
+                        "Platform" = "cuhb8obl0wjzz9r3",
       truncateStrings = FALSE)
       }
   
