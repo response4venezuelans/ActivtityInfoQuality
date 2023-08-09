@@ -379,11 +379,43 @@ test_that("fct_read_data works", {
 #' @return result list with results and data error...
 #' 
 #' @export
-fct_error_report <- function(  df5W, 
-                               lookup_dfadmin1, 
-                               lookup_dfadmin2, 
-                               lookup_dfindicator, 
-                               lookup_dfpartner ){
+fct_error_report <- function(df5W, 
+                             lookup_dfadmin1, 
+                             lookup_dfadmin2, 
+                             lookup_dfindicator, 
+                             lookup_dfpartner ){
+  
+  colnames(df5W) <- c("Country",
+                 "Admin1",
+                 "Admin2",
+                 "Appealing_org",
+                 "Implementation",
+                 "Implementing_partner",
+                 "Month",
+                 "Subsector",
+                 "Indicator",
+                 "Activity_Name",
+                 "Activity_Description",
+                 "RMRPActivity",
+                 "CVA",
+                 "Value",
+                 "Delivery_mechanism",
+                 "Quantity_output",
+                 "Total_monthly",
+                 "New_beneficiaries",
+                 "IN_DESTINATION",
+                 "IN_TRANSIT",
+                 "Host_Communities",
+                 "PENDULARS",
+                 "Returnees",
+                 "Girls",
+                 "Boys",
+                 "Women",
+                 "Men",
+                 "Other_under",
+                 "Other_above",
+                 "Platform")
+  
   
   # Data wrangling of reference table for quality check
   # Vectors for verification
