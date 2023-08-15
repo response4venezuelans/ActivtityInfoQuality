@@ -8,7 +8,7 @@
 
  3. Be able to flag the errors and apply automatic corrections or manual revisions, as desired by the data owner
 
-This package is the back office for a shny app visible here: [ActivtityInfoQuality](https://rstudio.unhcr.org/ActivtityInfoQuality/) and enable a scripted process so that:
+This package is the back office for a shny app visible here: [R4V_5W_Quality_Aggregation](https://rstudio.unhcr.org/R4V_5W_Quality_Aggregation/) and enable a scripted process so that:
 
  * Check are consistent with Activity Info  
  
