@@ -204,6 +204,7 @@ fct_read_data <- function(filter = NULL ,
                         "Men" = "ctd27ackx6l7g814v",
                         "Other_under" = "ckjcuiokx6l9a504w",
                         "Other_above" = "cq4hs3skx6lggpj4x",
+                        "Platform" = "cuhb8obl0wjzz9r3",
        filter = sprintf('cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4 == "%s" ', value),
        truncateStrings = FALSE)
       } else  if(  all(!(is.null(filter)) &  filter == "partner") ) {
@@ -238,6 +239,7 @@ fct_read_data <- function(filter = NULL ,
                         "Men" = "ctd27ackx6l7g814v",
                         "Other_under" = "ckjcuiokx6l9a504w",
                         "Other_above" = "cq4hs3skx6lggpj4x",
+                        "Platform" = "cuhb8obl0wjzz9r3",
        filter = sprintf('c5648gjkx69ra2v9.ckj5zamkumvyysv9 == "%s" ', value),
        truncateStrings = FALSE)
       } else  {
@@ -272,6 +274,7 @@ fct_read_data <- function(filter = NULL ,
                         "Men" = "ctd27ackx6l7g814v",
                         "Other_under" = "ckjcuiokx6l9a504w",
                         "Other_above" = "cq4hs3skx6lggpj4x",
+                        "Platform" = "cuhb8obl0wjzz9r3",
       truncateStrings = FALSE)
       }
   
@@ -379,11 +382,43 @@ test_that("fct_read_data works", {
 #' @return result list with results and data error...
 #' 
 #' @export
-fct_error_report <- function(  df5W, 
-                               lookup_dfadmin1, 
-                               lookup_dfadmin2, 
-                               lookup_dfindicator, 
-                               lookup_dfpartner ){
+fct_error_report <- function(df5W, 
+                             lookup_dfadmin1, 
+                             lookup_dfadmin2, 
+                             lookup_dfindicator, 
+                             lookup_dfpartner ){
+  
+  colnames(df5W) <- c("Country",
+                 "Admin1",
+                 "Admin2",
+                 "Appealing_org",
+                 "Implementation",
+                 "Implementing_partner",
+                 "Month",
+                 "Subsector",
+                 "Indicator",
+                 "Activity_Name",
+                 "Activity_Description",
+                 "RMRPActivity",
+                 "CVA",
+                 "Value",
+                 "Delivery_mechanism",
+                 "Quantity_output",
+                 "Total_monthly",
+                 "New_beneficiaries",
+                 "IN_DESTINATION",
+                 "IN_TRANSIT",
+                 "Host_Communities",
+                 "PENDULARS",
+                 "Returnees",
+                 "Girls",
+                 "Boys",
+                 "Women",
+                 "Men",
+                 "Other_under",
+                 "Other_above",
+                 "Platform")
+  
   
   # Data wrangling of reference table for quality check
   # Vectors for verification
@@ -653,6 +688,38 @@ fct_aggregate_data <- function(df5W,
                                lookup_dfindicator,
                              proportions = "pin", 
                              totalmodel = "sum"){
+  
+  colnames(df5W) <- c("Country",
+                 "Admin1",
+                 "Admin2",
+                 "Appealing_org",
+                 "Implementation",
+                 "Implementing_partner",
+                 "Month",
+                 "Subsector",
+                 "Indicator",
+                 "Activity_Name",
+                 "Activity_Description",
+                 "RMRPActivity",
+                 "CVA",
+                 "Value",
+                 "Delivery_mechanism",
+                 "Quantity_output",
+                 "Total_monthly",
+                 "New_beneficiaries",
+                 "IN_DESTINATION",
+                 "IN_TRANSIT",
+                 "Host_Communities",
+                 "PENDULARS",
+                 "Returnees",
+                 "Girls",
+                 "Boys",
+                 "Women",
+                 "Men",
+                 "Other_under",
+                 "Other_above",
+                 "Platform")
+  
   
   # Filter by the needed country and PiN indicators only
 
