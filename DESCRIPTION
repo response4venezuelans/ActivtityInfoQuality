@@ -8,7 +8,6 @@ Description: Performs Data Quality Check and Aggregation based on a
 License: MIT + file LICENSE
 URL: https://github.com/edouard-legoupil/ActivtityInfoQuality
 Imports: 
-    activityinfo,
     config,
     datamods,
     dplyr,
@@ -34,6 +33,7 @@ VignetteBuilder:
     knitr
 Remotes: 
     edouard-legoupil/unhcrshiny,
+    bedatadriven/activityinfo-R,
     vidonne/unhcrthemes
 Config/fusen/version: 0.5.1
 Encoding: UTF-8
