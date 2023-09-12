@@ -146,6 +146,8 @@ fct_aggregate_data <- function(df5W,
                  "Other_above",
                  "Platform")
   
+  df5W <- df5W |> 
+    dplyr::select(1:30)
   
   # Filter by the needed country and PiN indicators only
 
