@@ -420,6 +420,10 @@ fct_error_report <- function(df5W,
                  "Platform")
   
   
+  df5W <- df5W |> 
+    dplyr::select(1:30)
+  
+  
   # Data wrangling of reference table for quality check
   # Vectors for verification
   partnerlist <- unique(as.vector(lookup_dfpartner["Name"]))
@@ -494,13 +498,12 @@ fct_error_report <- function(df5W,
          wrongsectindicator, zeroCVA, missingmechanism, CVANotoYes,
          MultipurposeSector, DirectAssistanceNoBenef, NewBenefvstotal, 
          PopTypeBreakdown, AGDBreakdown, CBuildingNoBenef, NoOutput) , 
-      na.rm = TRUE) ,
-       Review = ifelse (QA > 0, "Please review activity", "OK") ,
-       Review2 = ifelse (QA > 0, 1, NA) ) |>
-    
+      na.rm = TRUE))|> 
     dplyr::ungroup() |> 
     ## Remove empty column
-    purrr::discard(~all(is.na(.) | . ==""))
+    purrr::discard(~all(is.na(.) | . =="")) |> 
+    dplyr::mutate(Review = ifelse(QA > 0, "Please review activity", "OK"),
+                  Review2 = ifelse(QA > 0, 1, NA))
   
    # table( df5Werror$QA, useNA = "ifany")
    # table( df5Werror$Review, useNA = "ifany")
@@ -720,6 +723,8 @@ fct_aggregate_data <- function(df5W,
                  "Other_above",
                  "Platform")
   
+  df5W <- df5W |> 
+    dplyr::select(1:30)
   
   # Filter by the needed country and PiN indicators only
 
