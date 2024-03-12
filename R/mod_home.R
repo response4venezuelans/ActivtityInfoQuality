@@ -22,7 +22,7 @@ mod_home_ui <- function(id) {
                            ### Get the name for your tool
                            p(
                              tags$span("Quality Control & Aggregation of Monitoring Data", style = "font-size: 60px"),
-                             tags$span("ActivityInfo - 5W and Consolidated Report 2023", style = "font-size: 24px")
+                             tags$span("ActivityInfo - 5W and Consolidated Report 2024", style = "font-size: 24px")
                            ),
                            br(),
                            ### Then a short explainer
@@ -59,7 +59,7 @@ mod_home_ui <- function(id) {
                            ### Get the name for your tool SPA
                            p(
                              tags$span("Control de calidad y agregación de datos de monitoreo", style = "font-size: 60px"),
-                             tags$span("ActivityInfo R4V – 5W y Reporte Consolidado 2023", style = "font-size: 24px")
+                             tags$span("ActivityInfo R4V – 5W y Reporte Consolidado 2024", style = "font-size: 24px")
                            ),
                            br(),
                            ### Then a short explainer SPA

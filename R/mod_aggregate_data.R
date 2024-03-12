@@ -31,7 +31,8 @@ mod_aggregate_data_ui <- function(id) {
     		        inline = TRUE,
     		        inputId = ns("totalmodel"),
     		        label = "Define Aggregation Model",
-    		        choices = c("sum", "maxsector", "southernconemodel"))
+    		        choices = c("sum"))
+		            #choices = c("sum", "maxsector", "southernconemodel"))
 		        ),
 		        # column(
 		        #   width = 4,
