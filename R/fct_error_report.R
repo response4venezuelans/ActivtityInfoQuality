@@ -174,7 +174,7 @@ fct_error_report <- function(df5W,
       CVANotoYes = ifelse((!is.na(Delivery_mechanism) | (!is.na(Value) & Value > 0)) & CVA == "No", 1,  NA),
       MultipurposeSector = ifelse(Subsector == "Multipurpose Cash Assistance (MPC)" & CVA == "No", 1,  NA),
       # Output and Breakdown related mistakes. Reviews will be divided according to indicator types
-      # PNiN indicator related mistakes
+      # PiN indicator related mistakes
       DirectAssistanceNoBenef = ifelse(IndicatorType == 'Direct Assistance' &
                                          ((is.na(New_beneficiaries) | New_beneficiaries == 0) &
                                             (is.na(Total_monthly) | Total_monthly == 0)), 1,  NA),
