@@ -194,6 +194,10 @@ fct_error_report <- function(df5W,
       CBuildingNoBenef = ifelse(IndicatorType == 'Capacity Building' &
                                   (Total_monthly == 0 | is.na(Total_monthly)),
                                 1,  NA),
+      # # Capacity building commission errors
+      # CbuildingWithPopBreakdown = ifelse(IndicatorType == 'Capacity Building' &
+      #                               (Total_monthly == 0 | is.na(Total_monthly)),
+      #                               1, NA),
       # Todos los otros indicadores
       NoOutput = ifelse ((IndicatorType != 'Capacity Building' &
                             IndicatorType != 'Direct Assistance') & 

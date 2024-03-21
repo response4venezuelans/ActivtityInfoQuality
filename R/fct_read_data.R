@@ -53,7 +53,7 @@ fct_read_data <- function(filter = NULL ,
                                 prompt = FALSE)
 
     # Get data from different sources
-    if( all(!(is.null(filter)) & filter == "country") ) {
+    if( all(!(is.null(filter)) & filter == "Country") ) {
     df5W <-  activityinfo::queryTable(
       form ="cwp64n0lo79a2de8",
                         "Country" = "cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4",
@@ -86,7 +86,7 @@ fct_read_data <- function(filter = NULL ,
                         "Other_under" = "ckjcuiokx6l9a504w",
                         "Other_above" = "cq4hs3skx6lggpj4x",
                         "Platform" = "cuhb8obl0wjzz9r3",
-       filter = sprintf('cwp64n0lo79a2de8.c8u26b8kxeqpy0k4 == "%s" ', value),
+       filter = sprintf('cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4 == "%s" ', value),
        truncateStrings = FALSE)
       } else  if(  all(!(is.null(filter)) &  filter == "partner") ) {
        df5W <-  activityinfo::queryTable(
