@@ -53,7 +53,7 @@ fct_read_data <- function(filter = NULL ,
                                 prompt = FALSE)
 
     # Get data from different sources
-    if( all(!(is.null(filter)) & filter == "Country") ) {
+    if( all(!(is.null(filter)) & filter == "country") ) {
     df5W <-  activityinfo::queryTable(
       form ="cwp64n0lo79a2de8",
                         "Country" = "cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4",
