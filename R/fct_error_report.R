@@ -178,6 +178,8 @@ fct_error_report <- function(df5W,
       DirectAssistanceNoBenef = ifelse(IndicatorType == 'Direct Assistance' &
                                          ((is.na(New_beneficiaries) | New_beneficiaries == 0) &
                                             (is.na(Total_monthly) | Total_monthly == 0)), 1,  NA),
+      DirectAssistanceWithQuantityOfOutput= ifelse(IndicatorType == 'Direct Assistance' &
+                                         (Quantity_output>0), 1,  NA),
       NewBenefvstotal = ifelse(IndicatorType == 'Direct Assistance' & New_beneficiaries > Total_monthly, 1,  NA),
       PopTypeBreakdown = ifelse(IndicatorType == 'Direct Assistance' & New_beneficiaries != sum(IN_DESTINATION,
                                                                                    IN_TRANSIT,
@@ -188,16 +190,64 @@ fct_error_report <- function(df5W,
                                                                                 Boys,
                                                                                 Women,
                                                                                 Men,
-                                                                              Other_under,
+                                                                                Other_under,
                                                                                 Other_above, na.rm = TRUE), 1,  NA),
       # Capacity Building indicators
       CBuildingNoBenef = ifelse(IndicatorType == 'Capacity Building' &
                                   (Total_monthly == 0 | is.na(Total_monthly)),
                                 1,  NA),
-      # # Capacity building commission errors
-      # CbuildingWithPopBreakdown = ifelse(IndicatorType == 'Capacity Building' &
-      #                               (Total_monthly == 0 | is.na(Total_monthly)),
-      #                               1, NA),
+      # Commission errors 
+    CampaignWithPopulationType = ifelse(IndicatorType == 'Campaign' &
+                    (
+                      0 != sum(IN_DESTINATION,
+                               IN_TRANSIT,
+                               Host_Communities,
+                               PENDULARS,
+                               Returnees, na.rm = TRUE)
+                    ) ,
+                  1,  NA),
+    CampaignWithAgeAndGender = ifelse(IndicatorType == 'Campaign' &
+                                          (
+                                            0 != sum(Girls,
+                                                     Boys,
+                                                     Women,
+                                                     Men,
+                                                     Other_under,
+                                                     Other_above, na.rm = TRUE)
+                                          ) ,
+                                        1,  NA),
+    CapacityBuildingWithPopulationType = ifelse(IndicatorType == 'Capacity Building' &
+                                          (
+                                            0 != sum(IN_DESTINATION,
+                                                     IN_TRANSIT,
+                                                     Host_Communities,
+                                                     PENDULARS,
+                                                     Returnees, na.rm = TRUE)
+                                          ),
+                                          1,  NA),
+    # For Infrastructure, mechanism/advocacy and other comission errors on total
+    # beneficiaries, new beneficiaries, pop type and AGD
+    ActivityWithBeneficiariesRegistered = ifelse ((
+      IndicatorType != 'Capacity Building' &
+        IndicatorType != 'Direct Assistance' &
+        IndicatorType != 'Campaign'
+    ) &
+      (Total_monthly != 0 |
+         is.na(Total_monthly)|
+         0 != sum(IN_DESTINATION,
+                  IN_TRANSIT,
+                  Host_Communities,
+                  PENDULARS,
+                  Returnees, na.rm = TRUE)|
+         0 != sum(Girls,
+                  Boys,
+                  Women,
+                  Men,
+                  Other_under,
+                  Other_above, na.rm = TRUE)),
+    1,
+    NA
+    ), 
       # Todos los otros indicadores
       NoOutput = ifelse ((IndicatorType != 'Capacity Building' &
                             IndicatorType != 'Direct Assistance') & 
@@ -205,11 +255,29 @@ fct_error_report <- function(df5W,
                          1,  NA)   ) |>
     ## Compile all errors 
     dplyr::mutate( QA = sum( 
-      c( missingcountry, countryadmincheck, admin1and2check, miss_appeal_org,
-         miss_setup, miss_implementing_org, miss_month, missing_what, 
-         wrongsectindicator, zeroCVA, missingmechanism, CVANotoYes,
-         MultipurposeSector, DirectAssistanceNoBenef, NewBenefvstotal, 
-         PopTypeBreakdown, AGDBreakdown, CBuildingNoBenef, NoOutput) , 
+      c( missingcountry, 
+         countryadmincheck, 
+         admin1and2check, 
+         miss_appeal_org,
+         miss_setup, 
+         miss_implementing_org, 
+         miss_month, missing_what, 
+         wrongsectindicator, 
+         zeroCVA, 
+         missingmechanism, 
+         CVANotoYes,
+         MultipurposeSector, 
+         DirectAssistanceNoBenef,
+         DirectAssistanceWithQuantityOfOutput, 
+         NewBenefvstotal, 
+         PopTypeBreakdown, 
+         AGDBreakdown, 
+         CBuildingNoBenef,
+         CampaignWithPopulationType, 
+         CampaignWithAgeAndGender,
+         CapacityBuildingWithPopulationType,
+         ActivityWithBeneficiariesRegistered,
+         NoOutput), 
       na.rm = TRUE))|> 
     dplyr::ungroup() |> 
     ## Remove empty column
