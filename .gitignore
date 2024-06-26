@@ -1,2 +1,6 @@
 inst/doc
 .Rproj.user
+.Renviron
+.Rhistory
+.RData
+*.Rproj

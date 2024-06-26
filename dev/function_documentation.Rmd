@@ -61,7 +61,7 @@ fct_read_lookup <- function(type ){
   # Loaded from AI regardless the method for 5W used
   if( type == "admin1") {
   lookup  <- activityinfo::queryTable(
-    form= "ctfe4etlct8v92h2s2z",
+    form= "cryi2v5lo79a2dh9", #fix it 
                            "Country" = "c8u26b8kxeqpy0k4",
                            "Admin1" = "c3ns3zikxeqq4h95",
                            "ISOCode" = "cl3sspjkxeqq8yq6",
@@ -73,7 +73,7 @@ fct_read_lookup <- function(type ){
   
   if( type == "admin2") {
   lookup <- activityinfo::queryTable(
-    form= "cxl7zn3lct8v92h2s32",
+    form= "cbxcifmlo79a2de3",  #fix it 
                          "Country" = "cnkb6jykxgdeemm4r.c8u26b8kxeqpy0k4",
                          "Admin1" = "cnkb6jykxgdeemm4r.c3ns3zikxeqq4h95",
                          "Admin2" = "cs2esadkx6hkt7j6", 
@@ -85,7 +85,7 @@ fct_read_lookup <- function(type ){
   
   if( type == "indicator") {
   lookup  <- activityinfo::queryTable(
-    form= "cbumi0ulctcno232",
+    form= "cv2dgf6lo79a2de6",  #fix it 
                               "CODE" = "cdhugiblctco28h3",
                               "Subsector" = "cagw22hlctcp2vu5",
                               "Indicator" = "c1oo0eclctcqtjp8",
@@ -98,7 +98,7 @@ fct_read_lookup <- function(type ){
   
   if( type == "partner") {
   lookup <- activityinfo::queryTable(
-    form= "cvbei1nlct8v92h2s31",
+    form= "cwt6nqqlo79a2de7", #fix it
                           "AOIDORG" = "cnhvpo4kumvyqla8",
                           "Name" = "ckj5zamkumvyysv9",
                           "Type" = "c813krekumw0449j",
@@ -174,7 +174,7 @@ fct_read_data <- function(filter = NULL ,
     # Get data from different sources
     if( all(!(is.null(filter)) & filter == "country") ) {
     df5W <-  activityinfo::queryTable(
-      form ="cm2ansilct8v92h2s37",
+      form ="cwp64n0lo79a2de8",
                         "Country" = "cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4",
                         "Admin1" = "cezj1rqkxeqrsy57.c3ns3zikxeqq4h95",
                         "Admin2" = "c89klrbkx6hp4j58.cs2esadkx6hkt7j6",
@@ -209,7 +209,7 @@ fct_read_data <- function(filter = NULL ,
        truncateStrings = FALSE)
       } else  if(  all(!(is.null(filter)) &  filter == "partner") ) {
        df5W <-  activityinfo::queryTable(
-              form ="cm2ansilct8v92h2s37",
+              form ="cwp64n0lo79a2de8",
                         "Country" = "cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4",
                         "Admin1" = "cezj1rqkxeqrsy57.c3ns3zikxeqq4h95",
                         "Admin2" = "c89klrbkx6hp4j58.cs2esadkx6hkt7j6",
@@ -244,7 +244,7 @@ fct_read_data <- function(filter = NULL ,
        truncateStrings = FALSE)
       } else  {
       df5W <-  activityinfo::queryTable(
-         form ="cm2ansilct8v92h2s37",
+         form ="cwp64n0lo79a2de8",
                         "Country" = "cezj1rqkxeqrsy57.c8u26b8kxeqpy0k4",
                         "Admin1" = "cezj1rqkxeqrsy57.c3ns3zikxeqq4h95",
                         "Admin2" = "c89klrbkx6hp4j58.cs2esadkx6hkt7j6",

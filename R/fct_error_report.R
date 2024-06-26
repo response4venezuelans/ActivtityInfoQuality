@@ -81,7 +81,7 @@
 #'
 #'
 #' ## last example with offline data..
-#' df5Woffline <-  readxl::read_excel( system.file("Activities_5W_2023.xlsx", 
+#' df5Woffline <-  readxl::read_excel( system.file("Activities_5W_2024.xlsx", 
 #'                                                 package = "ActivtityInfoQuality") )
 #' resultctr <- fct_error_report(df5Woffline, 
 #'                                lookup_dfadmin1, 
@@ -263,7 +263,7 @@ fct_error_report <- function(df5W,
             caption = paste0( "Source:R4V | Data as of ",format(Sys.Date(),  '%d %B %Y'))    ) +
         unhcrthemes::theme_unhcr(font_size = 14,
                       grid = "X"#,
-                     # rel_small = 6/9#,
+                      #rel_small = 6/9#,
                      # axis = "y",
                       #axis_title = TRUE,
                      # legend = FALSE,
@@ -293,7 +293,7 @@ fct_error_report <- function(df5W,
              format(Sys.Date(),  '%d %B %Y'))    ) +
         unhcrthemes::theme_unhcr(font_size = 14,
                       grid = "X"#,
-                      # rel_small = 6/9#,
+                      #rel_small = 6/9#,
                      # axis = "y",
                       #axis_title = TRUE,
                      # legend = FALSE,

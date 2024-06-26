@@ -35,7 +35,7 @@ VignetteBuilder:
 Remotes: 
     edouard-legoupil/unhcrshiny,
     vidonne/unhcrthemes
-Config/fusen/version: 0.5.2
+Config/fusen/version: 0.6.0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1

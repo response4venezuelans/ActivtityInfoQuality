@@ -1,0 +1,23 @@
+function_documentation.Rmd:
+  path: dev/function_documentation.Rmd
+  state: active
+  R:
+  - R/fct_aggregate_data.R
+  - R/fct_error_report.R
+  - R/fct_read_data.R
+  - R/fct_read_lookup.R
+  - R/run_app.R
+  tests:
+  - tests/testthat/test-fct_read_lookup.R
+  - tests/testthat/test-fct_read_data.R
+  - tests/testthat/test-fct_error_report.R
+  - tests/testthat/test-fct_aggregate_data.R
+  vignettes: vignettes/development.Rmd
+  inflate:
+    flat_file: dev/function_documentation.Rmd
+    vignette_name: Development
+    open_vignette: true
+    check: true
+    document: true
+    overwrite: ask
+    clean: ask

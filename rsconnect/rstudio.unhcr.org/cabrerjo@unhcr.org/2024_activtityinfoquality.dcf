@@ -1,0 +1,12 @@
+name: 2024_activtityinfoquality
+title: 2024 ActivtityInfoQuality
+username: cabrerjo@unhcr.org
+account: cabrerjo@unhcr.org
+server: rstudio.unhcr.org
+hostUrl: https://rstudio.unhcr.org/__api__
+appId: 593
+bundleId: 2064
+url: https://rstudio.unhcr.org/content/cc7d5dae-250e-43ff-8381-6587a2e7cf4e/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

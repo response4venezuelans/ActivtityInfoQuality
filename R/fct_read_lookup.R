@@ -54,7 +54,7 @@ fct_read_lookup <- function(type ){
   # Loaded from AI regardless the method for 5W used
   if( type == "admin1") {
   lookup  <- activityinfo::queryTable(
-    form= "cryi2v5lo79a2dh9",
+    form= "cryi2v5lo79a2dh9", #fix it 
                            "Country" = "c8u26b8kxeqpy0k4",
                            "Admin1" = "c3ns3zikxeqq4h95",
                            "ISOCode" = "cl3sspjkxeqq8yq6",
@@ -66,7 +66,7 @@ fct_read_lookup <- function(type ){
   
   if( type == "admin2") {
   lookup <- activityinfo::queryTable(
-    form= "cbxcifmlo79a2de3",
+    form= "cbxcifmlo79a2de3",  #fix it 
                          "Country" = "cnkb6jykxgdeemm4r.c8u26b8kxeqpy0k4",
                          "Admin1" = "cnkb6jykxgdeemm4r.c3ns3zikxeqq4h95",
                          "Admin2" = "cs2esadkx6hkt7j6", 
@@ -78,7 +78,7 @@ fct_read_lookup <- function(type ){
   
   if( type == "indicator") {
   lookup  <- activityinfo::queryTable(
-    form= "cv2dgf6lo79a2de6",
+    form= "cv2dgf6lo79a2de6",  #fix it 
                               "CODE" = "cdhugiblctco28h3",
                               "Subsector" = "cagw22hlctcp2vu5",
                               "Indicator" = "c1oo0eclctcqtjp8",
@@ -91,7 +91,7 @@ fct_read_lookup <- function(type ){
   
   if( type == "partner") {
   lookup <- activityinfo::queryTable(
-    form= "cwt6nqqlo79a2de7",
+    form= "cwt6nqqlo79a2de7", #fix it
                           "AOIDORG" = "cnhvpo4kumvyqla8",
                           "Name" = "ckj5zamkumvyysv9",
                           "Type" = "c813krekumw0449j",
