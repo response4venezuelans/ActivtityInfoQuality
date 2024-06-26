@@ -2,6 +2,7 @@
 pkgs <- c(
   "unhcrshiny",
   "tidyverse",
+  "ggplot2",
   "golem",
   "shiny",
   "shinyjs",

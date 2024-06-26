@@ -21,7 +21,7 @@ mod_home_ui <- function(id) {
                   tabPanel(title= "English",
                            ### Get the name for your tool
                            p(
-                             tags$span("Quality Control & Aggregation of Monitoring Data", style = "font-size: 60px"),
+                             tags$span("Quality Control and Aggregation of Monitoring Data", style = "font-size: 60px"),
                              tags$span("ActivityInfo - 5W and Consolidated Report 2024", style = "font-size: 24px")
                            ),
                            br(),
@@ -58,23 +58,23 @@ mod_home_ui <- function(id) {
                            
                            ### Get the name for your tool SPA
                            p(
-                             tags$span("Control de calidad y agregación de datos de monitoreo", style = "font-size: 60px"),
+                             tags$span("Control de calidad y agregacion de datos de monitoreo", style = "font-size: 60px"),
                              tags$span("ActivityInfo R4V – 5W y Reporte Consolidado 2024", style = "font-size: 24px")
                            ),
                            br(),
                            ### Then a short explainer SPA
-                           p("Aunque ActivityInfo permite poner restricciones y reglas de validación, 
+                           p("Aunque ActivityInfo permite poner restricciones y reglas de validacion, 
       algunas de ellas se pueden sobrescribir, especialmente cuando se cargan datos
         de forma masiva.",
                              style = "font-size: 20px"),
                            br(),
-                           p("Esta aplicación está diseñada para verificar los datos existentes en ActivityInfo
-        o para verificar rápidamente los datos sin conexión antes de cargarlos en masa.",
+                           p("Esta aplicacion esta disenada para verificar los datos existentes en ActivityInfo
+        o para verificar rapidamente los datos sin conexion antes de cargarlos en masa.",
                              style = "font-size: 20px"),
                            br(),
-                           p("Después del proceso del chequeo de calidad (QA), el usuario puede descargar una versión 
-        agregada de su conjunto de datos de acuerdo con el método específico del contexto y usar
-        estos datos para la creación del Reporte Consolidado sobre población alcanzada por sector.",
+                           p("Despues del proceso del chequeo de calidad (QA), el usuario puede descargar una version 
+        agregada de su conjunto de datos de acuerdo con el metodo especifico del contexto y usar
+        estos datos para la creacion del Reporte Consolidado sobre poblacion alcanzada por sector.",
                              style = "font-size: 20px"),
                            br(),
                            p(tags$i( class = "fa fa-github"), "App built with ",
